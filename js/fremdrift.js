@@ -71,15 +71,16 @@ var Fremdrift = (function () {
 
   /* ---------- Installerte programmer (det ferdige, som blir en del av spillet) ---------- */
 
-  function installer(id, program) {
+  function installer(id, program, flate) {
     for (var i = 0; i < data.installerte.length; i++) {
       if (data.installerte[i].id === id) {
         data.installerte[i].program = kopi(program);
+        data.installerte[i].flate = flate || "rom";
         lagre();
         return;
       }
     }
-    data.installerte.push({ id: id, program: kopi(program) });
+    data.installerte.push({ id: id, program: kopi(program), flate: flate || "rom" });
     lagre();
   }
 

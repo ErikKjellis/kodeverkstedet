@@ -137,6 +137,7 @@ js/
   effekter.js                   konfetti og trykk-ringer
   input.js                      finger og mus
   verden.js                     rommet, møblene, elevens tegnelag
+  skjerm.js                     verdenen inne i datamaskinen
   dialog.js                     Bit som snakker, og banneret nederst
   fremdrift.js                  lagring i nettleseren
   api.js                        ALLE kodebitene eleven kan bruke
@@ -146,7 +147,24 @@ js/
   kapitler/
     kapittel00-rommet.js        det tomme rommet
     kapittel01-musepeker.js     musepekeren
+    kapittel02-skrivebordet.js  skrivebordet inne i maskinen
 ```
+
+### To steder å være
+
+Spillet har **to flater**: `"rom"` og `"skjerm"`. Rommet er der møblene står.
+Skjermen er verdenen inne i datamaskinen, og har sitt eget koordinatsystem på
+1000 x 700 – akkurat som rommet.
+
+Det er det samme bildet uansett hvor man er. Når man trykker på datamaskinen,
+vokser skjermen ut over hele nettbrettet. Når man går ut igjen, krymper den ned
+i monitoren på bordet – og da ser man skrivebordet sitt i miniatyr der.
+
+En oppgave sier hvilken flate den hører til med `flate: "skjerm"`. Alt programmet
+lager – tegninger, ikoner, hendelser – havner der.
+
+**Fra og med kapittel 2 er dette veien til all programmering:** trykk på
+datamaskinen, trykk på ikonet, kod.
 
 ### Hvordan elevens kode virker
 
@@ -189,6 +207,7 @@ En **oppgave** ser slik ut:
   installasjonsId: "stol",      // programmer med samme id erstatter hverandre
   tittel: "Bygg en stol",
   instruks: "Forklaringen som står øverst i vinduet.",
+  flate: "skjerm",              // "rom" eller "skjerm"
   valgtVedStart: "forste",      // "forste", "siste" eller utelatt
   startProgram: function () { return [ /* kodelinjer som står der fra før */ ]; },
   palett: [ /* kodebitene han kan velge mellom */ ],
@@ -202,6 +221,18 @@ En **oppgave** ser slik ut:
 Trenger kapittelet en kodebit som ikke finnes ennå, legger du den til i
 `js/api.js`. Kopier en av de som står der, og bytt ut `html` (hvordan koden ser
 ut) og `kjor` (hva som faktisk skjer).
+
+### Verdier han kan trykke på
+
+Gir du en verdi i en kodebit en `valg`-liste, blir den til en gul knapp han kan
+bla gjennom rett i koden:
+
+```javascript
+farge: { k: "tekst", v: "blå", valg: ["blå", "grønn", "lilla"] }
+```
+
+Det er slik han kan endre farger, plasseringer og navn uten å taste noe. Bruk
+det mye – det er den billigste måten å gi ham noe å leke med på.
 
 ---
 

@@ -43,10 +43,14 @@ var Verden = (function () {
 
   /* ---------- Lag (elevens tegninger) ---------- */
 
-  function sikreLag(navn, eier) {
+  /*
+    "flate" sier hvor laget hører hjemme: "rom" er selve rommet,
+    "skjerm" er inne i datamaskinen.
+  */
+  function sikreLag(navn, eier, flate) {
     var l = finnLag(navn);
     if (!l) {
-      l = { navn: navn, eier: eier, operasjoner: [] };
+      l = { navn: navn, eier: eier, flate: flate || "rom", operasjoner: [] };
       lag.push(l);
     }
     return l;
@@ -91,7 +95,7 @@ var Verden = (function () {
     leggTil({
       id: "datamaskin",
       navn: "datamaskinen",
-      omrade: { x: 398, y: 272, bredde: 200, hoyde: 165 },
+      omrade: { x: 404, y: 264, bredde: 192, hoyde: 172 },
       tegn: tegnDatamaskin,
       pa: false
     });
@@ -138,22 +142,18 @@ var Verden = (function () {
     Tegning.firkant(658, 454, 20, 150, "#6f4a2c");
   }
 
+  /*
+    Selve monitoren. Innholdet på skjermen tegnes ikke her - det gjør
+    Skjerm, slik at det er nøyaktig det samme bildet enten skjermen er
+    liten i rommet eller zoomet ut over hele nettbrettet.
+  */
   function tegnDatamaskin() {
-    var g = finn("datamaskin");
-    var lyser = g && g.pa;
-
-    /* Skjermkasse */
-    Tegning.avrundetFirkant(408, 272, 184, 132, 12, "#171a26");
-    Tegning.ramme(408, 272, 184, 132, "#39415c", 3, 12);
-    /* Selve skjermen */
-    Tegning.avrundetFirkant(420, 284, 160, 100, 6, lyser ? "#123a5c" : "#0b0d14");
-    if (lyser) {
-      Tegning.firkant(432, 300, 84, 7, "#7fd1ff");
-      Tegning.firkant(432, 316, 116, 7, "#4f9dff");
-      Tegning.firkant(432, 332, 62, 7, "#3ecb7a");
-    }
+    /* Skjermkasse rundt glasset (420, 280, 160, 112) */
+    Tegning.avrundetFirkant(408, 268, 184, 144, 12, "#171a26");
+    Tegning.ramme(408, 268, 184, 144, "#39415c", 3, 12);
+    Tegning.avrundetFirkant(420, 280, 160, 112, 4, "#0b0d14");
     /* Fot */
-    Tegning.firkant(484, 404, 32, 16, "#171a26");
+    Tegning.firkant(484, 412, 32, 12, "#171a26");
     Tegning.avrundetFirkant(454, 418, 92, 10, 4, "#22273a");
     /* Tastatur på bordplaten */
     Tegning.avrundetFirkant(418, 432, 164, 16, 4, "#2c3247");
@@ -164,11 +164,27 @@ var Verden = (function () {
 
   /* ---------- Tegn hele verdenen ---------- */
 
+  /*
+    Rekkefølgen betyr alt:
+      1. rommet og møblene
+      2. det som finnes inne i datamaskinen
+      3. elevens tegninger i rommet - musepekeren ligger her, og den
+         skal alltid ligge aller øverst
+  */
   function tegn() {
     tegnRom();
+    tegnGjenstander();
 
-    var i;
-    for (i = 0; i < gjenstander.length; i++) {
+    var maskin = finn("datamaskin");
+    if (maskin && maskin.pa) {
+      Skjerm.tegn(function () { tegnLag("skjerm"); }, harInnholdPa("skjerm"));
+    }
+
+    tegnLag("rom");
+  }
+
+  function tegnGjenstander() {
+    for (var i = 0; i < gjenstander.length; i++) {
       var g = gjenstander[i];
       if (g.skjult) continue;
       g.tegn(g);
@@ -184,9 +200,11 @@ var Verden = (function () {
         ctx.restore();
       }
     }
+  }
 
-    /* Elevens egne tegninger, lag for lag */
-    for (i = 0; i < lag.length; i++) {
+  function tegnLag(flate) {
+    for (var i = 0; i < lag.length; i++) {
+      if (lag[i].flate !== flate) continue;
       var ops = lag[i].operasjoner;
       for (var j = 0; j < ops.length; j++) {
         tegnOperasjon(ops[j]);
@@ -194,14 +212,47 @@ var Verden = (function () {
     }
   }
 
+  function harInnholdPa(flate) {
+    for (var i = 0; i < lag.length; i++) {
+      if (lag[i].flate === flate && lag[i].operasjoner.length > 0) return true;
+    }
+    return false;
+  }
+
   function tegnOperasjon(op) {
     if (op.form === "trekant") {
       Tegning.pekertrekant(op.x, op.y, op.storrelse, op.farge);
+
     } else if (op.form === "sirkel") {
       Tegning.sirkel(op.x, op.y, op.storrelse, op.farge);
+
     } else if (op.form === "firkant") {
       Tegning.firkant(op.x, op.y, op.storrelse, op.storrelse, op.farge);
+
+    } else if (op.form === "heleFlaten") {
+      Tegning.firkant(0, 0, Skjerm.BREDDE, Skjerm.HOYDE, op.farge);
+
+    } else if (op.form === "tekst") {
+      Tegning.tekst(op.tekst, op.x, op.y, op.storrelse, op.farge, "center");
+
+    } else if (op.form === "ikon") {
+      tegnIkon(op);
     }
+  }
+
+  /* Et programikon: en avrundet firkant med et lite kodetegn og en tekst under. */
+  function tegnIkon(op) {
+    var halv = op.storrelse / 2;
+    Tegning.avrundetFirkant(op.x - halv, op.y - halv, op.storrelse, op.storrelse, 16, op.farge);
+    Tegning.ramme(op.x - halv, op.y - halv, op.storrelse, op.storrelse, "rgba(0,0,0,0.35)", 3, 16);
+
+    var ctx = Tegning.ctx();
+    ctx.save();
+    ctx.globalAlpha = 0.75;
+    Tegning.tekst("< >", op.x, op.y + op.storrelse * 0.14, op.storrelse * 0.42, "#10121b", "center");
+    ctx.restore();
+
+    Tegning.tekst(op.tekst, op.x, op.y + halv + 32, 26, "#ffffff", "center");
   }
 
   return {

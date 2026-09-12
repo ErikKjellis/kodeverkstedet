@@ -54,6 +54,9 @@ var KodeEditor = (function () {
     instruksEl.innerHTML = oppgave.instruks;
     hintKnapp.classList.toggle("skjult", !oppgave.hint || oppgave.hint.length === 0);
 
+    /* Programmerer han inne i maskinen, skal skjermen være oppe bak vinduet. */
+    if (oppgave.flate === "skjerm") Skjerm.apne();
+
     Banner.skjul();
     Dialog.skjul();
     tegnPalett();
@@ -145,15 +148,15 @@ var KodeEditor = (function () {
       if (!def) continue;
 
       if (def.erBlokk) {
-        rader.push({ rolle: "start", linje: l, dybde: dybde, html: def.htmlStart(l) });
+        rader.push({ rolle: "start", linje: l, dybde: dybde, html: def.htmlStart(l, true) });
         if (!l.barn || l.barn.length === 0) {
           rader.push({ rolle: "tom", blokk: l, dybde: dybde + 1 });
         } else {
           flat(l.barn, dybde + 1, rader);
         }
-        rader.push({ rolle: "slutt", linje: l, dybde: dybde, html: def.htmlSlutt(l) });
+        rader.push({ rolle: "slutt", linje: l, dybde: dybde, html: def.htmlSlutt(l, true) });
       } else {
-        rader.push({ rolle: "linje", linje: l, dybde: dybde, html: def.html(l) });
+        rader.push({ rolle: "linje", linje: l, dybde: dybde, html: def.html(l, true) });
       }
     }
   }
@@ -166,9 +169,10 @@ var KodeEditor = (function () {
     for (var i = 0; i < biter.length; i++) {
       var mal = biter[i];
       var def = Api.hent(mal.type);
+      /* false = ingen trykkbare verdier her; en knapp kan ikke stå inni en knapp. */
       var visning = def.erBlokk
-        ? def.htmlStart(mal) + ' <span class="k-komm">…</span> ' + def.htmlSlutt(mal)
-        : def.html(mal);
+        ? def.htmlStart(mal, false) + ' <span class="k-komm">…</span> ' + def.htmlSlutt(mal, false)
+        : def.html(mal, false);
       html += '<button type="button" class="palettknapp" data-nr="' + i + '">' + visning + "</button>";
     }
     palettEl.innerHTML = html;
@@ -190,10 +194,44 @@ var KodeEditor = (function () {
       utforHandling(knapp.getAttribute("data-handling"), rad.getAttribute("data-id"));
       return;
     }
+
+    /* Trykk på en verdi i koden: bla til neste valg. */
+    var verdiknapp = e.target.closest("button.kodeverdi");
+    if (verdiknapp) {
+      var eier = verdiknapp.closest("[data-id]");
+      blaVerdi(eier.getAttribute("data-id"), verdiknapp.getAttribute("data-sti"));
+      return;
+    }
+
     var velgbar = e.target.closest("[data-velg]");
     if (!velgbar) return;
     valgtId = velgbar.getAttribute("data-velg");
     tegnOpp();
+  }
+
+  /* Bytter en verdi til den neste i lista si, og begynner forfra på slutten. */
+  function blaVerdi(linjeId, sti) {
+    var sted = finnSted(program, linjeId);
+    if (!sted) return;
+
+    var verdi = hentArg(sted.linje.args, sti);
+    if (!verdi || !verdi.valg || verdi.valg.length < 2) return;
+
+    var na = verdi.valg.indexOf(verdi.v);
+    verdi.v = verdi.valg[(na + 1) % verdi.valg.length];
+
+    lagreUtkast();
+    tegnOpp();
+  }
+
+  /* Finner en verdi inne i args ut fra en sti som "farge" eller "argumenter.0". */
+  function hentArg(args, sti) {
+    var deler = sti.split(".");
+    var node = args;
+    for (var i = 0; i < deler.length && node; i++) {
+      node = node[deler[i]];
+    }
+    return node;
   }
 
   function utforHandling(handling, id) {
@@ -261,7 +299,7 @@ var KodeEditor = (function () {
     skjul();
 
     Kjorer.tomFeil();
-    Kjorer.installer(oppgave.installasjonsId, program);
+    Kjorer.installer(oppgave.installasjonsId, program, oppgave.flate);
 
     /* Liten pause, så han rekker å se hva som skjedde før Bit sier noe. */
     setTimeout(vurder, 750);
@@ -277,7 +315,7 @@ var KodeEditor = (function () {
       return;
     }
 
-    Fremdrift.installer(oppgave.installasjonsId, program);
+    Fremdrift.installer(oppgave.installasjonsId, program, oppgave.flate);
 
     if (oppgave.bekreftIVerden) {
       ventPaVerden(resultat);
@@ -291,6 +329,10 @@ var KodeEditor = (function () {
   function ventPaVerden(resultat) {
     venterPaVerden = true;
     Input.nullstillBevegelse();
+
+    /* Noen oppgaver må nullstille noe først, så han faktisk må prøve på nytt. */
+    if (oppgave.bekreftIVerden.forbered) oppgave.bekreftIVerden.forbered();
+
     Banner.vis(oppgave.bekreftIVerden.instruks, { viktig: true });
 
     function sjekkNa() {

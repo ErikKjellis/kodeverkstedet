@@ -27,6 +27,8 @@ var Tegning = (function () {
     "rod":     "#e8503a",
     "blå":     "#4f9dff",
     "bla":     "#4f9dff",
+    "mørkeblå": "#1d3461",
+    "morkebla": "#1d3461",
     "grønn":   "#3ecb7a",
     "gronn":   "#3ecb7a",
     "gul":     "#ffd23f",
@@ -58,8 +60,15 @@ var Tegning = (function () {
     lerret.height = Math.max(1, Math.round(hoyde * pikselForhold));
 
     skala = Math.min(bredde / BREDDE, hoyde / HOYDE);
+
+    /* Aller første bilde kan komme før nettleseren har målt opp flaten.
+       Da er skalaen 0 eller uendelig, og alt vi regner ut blir tull. */
+    if (!isFinite(skala) || skala <= 0) skala = 1;
+
     forskyvX = (bredde - BREDDE * skala) / 2;
     forskyvY = (hoyde - HOYDE * skala) / 2;
+    if (!isFinite(forskyvX)) forskyvX = 0;
+    if (!isFinite(forskyvY)) forskyvY = 0;
   }
 
   /* Kalles først i hver ramme: visker ut og setter opp koordinatsystemet. */

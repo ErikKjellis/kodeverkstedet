@@ -8,6 +8,10 @@
 
    Vil du lage en ny kodebit til et senere kapittel, kopierer du én av disse
    og bytter ut innmaten.
+
+   Noen verdier i koden kan trykkes på og byttes ut. Gi verdien en "valg"-liste,
+   så blir den til en knapp eleven kan bla gjennom:
+       farge: { k: "tekst", v: "blå", valg: ["blå", "grønn", "lilla"] }
    ========================================================================== */
 
 var Api = (function () {
@@ -31,20 +35,35 @@ var Api = (function () {
   function vari(t)   { return '<span class="k-var">' + t + "</span>"; }
   function tegn(t)   { return '<span class="k-tegn">' + t + "</span>"; }
 
-  /* En "verdi" er enten et tall, en tekst eller navnet på en variabel:
+  /*
+    En "verdi" er enten et tall, en tekst eller navnet på en variabel:
        { k: "tall",  v: 20 }
        { k: "tekst", v: "hvit" }
-       { k: "var",   v: "x" }                                            */
-  function verdiHtml(v) {
+       { k: "var",   v: "x" }
+
+    sti      - hvor verdien ligger i linje.args, f.eks. "farge" eller "argumenter.0"
+    medValg  - false når vi tegner paletten (en knapp kan ikke stå inni en knapp)
+  */
+  function verdiHtml(v, sti, medValg) {
     if (!v) return tegn("?");
-    if (v.k === "tall") return tall(String(v.v));
-    if (v.k === "tekst") return tekst('"' + v.v + '"');
-    return vari(v.v);
+
+    var innhold;
+    if (v.k === "tall") innhold = tall(String(v.v));
+    else if (v.k === "tekst") innhold = tekst('"' + v.v + '"');
+    else innhold = vari(v.v);
+
+    if (medValg !== false && sti && v.valg && v.valg.length > 1) {
+      return '<button type="button" class="kodeverdi" data-sti="' + sti + '">' +
+             innhold + "</button>";
+    }
+    return innhold;
   }
 
-  function listeHtml(verdier) {
+  function listeHtml(verdier, sti, medValg) {
     var deler = [];
-    for (var i = 0; i < verdier.length; i++) deler.push(verdiHtml(verdier[i]));
+    for (var i = 0; i < verdier.length; i++) {
+      deler.push(verdiHtml(verdier[i], sti + "." + i, medValg));
+    }
     return deler.join(tegn(", "));
   }
 
@@ -84,12 +103,27 @@ var Api = (function () {
   definer({
     type: "kallEgenFunksjon",
     erBlokk: false,
-    html: function (linje) {
+    html: function (linje, medValg) {
       return funk(linje.args.navn) + tegn("(") +
-             listeHtml(linje.args.argumenter || []) + tegn(");");
+             listeHtml(linje.args.argumenter || [], "argumenter", medValg) + tegn(");");
     },
     kjor: function (miljo, linje) {
       Kjorer.kallFunksjon(miljo, linje.args.navn, linje.args.argumenter || [], linje);
+    }
+  });
+
+  /* ---- var bakgrunn = "blå"; --------------------------------------------
+     En variabel: en eske med navn på, som du kan putte noe i.
+     Lager du den øverst i programmet, kan alle bruke den. */
+  definer({
+    type: "variabel",
+    erBlokk: false,
+    html: function (linje, medValg) {
+      return nokkel("var") + " " + vari(linje.args.navn) + tegn(" = ") +
+             verdiHtml(linje.args.verdi, "verdi", medValg) + tegn(";");
+    },
+    kjor: function (miljo, linje) {
+      Kjorer.settVariabel(miljo, linje.args.navn, Kjorer.verdi(miljo, linje.args.verdi));
     }
   });
 
@@ -98,8 +132,9 @@ var Api = (function () {
   definer({
     type: "fyllFarge",
     erBlokk: false,
-    html: function (linje) {
-      return funk("fyllFarge") + tegn("(") + verdiHtml(linje.args.farge) + tegn(");");
+    html: function (linje, medValg) {
+      return funk("fyllFarge") + tegn("(") +
+             verdiHtml(linje.args.farge, "farge", medValg) + tegn(");");
     },
     kjor: function (miljo, linje) {
       miljo.farge = Kjorer.verdi(miljo, linje.args.farge);
@@ -111,11 +146,12 @@ var Api = (function () {
   definer({
     type: "tegnForm",
     erBlokk: false,
-    html: function (linje) {
+    html: function (linje, medValg) {
       var a = linje.args;
       return funk("tegn" + storForbokstav(a.form)) + tegn("(") +
-             verdiHtml(a.x) + tegn(", ") + verdiHtml(a.y) + tegn(", ") +
-             verdiHtml(a.storrelse) + tegn(");");
+             verdiHtml(a.x, "x", medValg) + tegn(", ") +
+             verdiHtml(a.y, "y", medValg) + tegn(", ") +
+             verdiHtml(a.storrelse, "storrelse", medValg) + tegn(");");
     },
     kjor: function (miljo, linje) {
       var a = linje.args;
@@ -126,6 +162,62 @@ var Api = (function () {
         storrelse: Kjorer.verdi(miljo, a.storrelse),
         farge: miljo.farge
       });
+    }
+  });
+
+  /* ---- fyllHeleSkjermen(); ----------------------------------------------
+     Maler hele flaten i fargen som gjelder nå. */
+  definer({
+    type: "fyllHeleSkjermen",
+    erBlokk: false,
+    html: function () {
+      return funk("fyllHeleSkjermen") + tegn("();");
+    },
+    kjor: function (miljo) {
+      Verden.tegnI(miljo.lag, { form: "heleFlaten", farge: miljo.farge });
+    }
+  });
+
+  /* ---- lagIkon(200, 200, "Kode"); --------------------------------------
+     Tegner et programikon på skjermen OG gjør det mulig å trykke på det. */
+  definer({
+    type: "lagIkon",
+    erBlokk: false,
+    html: function (linje, medValg) {
+      var a = linje.args;
+      return funk("lagIkon") + tegn("(") +
+             verdiHtml(a.x, "x", medValg) + tegn(", ") +
+             verdiHtml(a.y, "y", medValg) + tegn(", ") +
+             verdiHtml(a.navn, "navn", medValg) + tegn(");");
+    },
+    kjor: function (miljo, linje) {
+      var a = linje.args;
+      var x = Kjorer.verdi(miljo, a.x);
+      var y = Kjorer.verdi(miljo, a.y);
+      var navn = Kjorer.verdi(miljo, a.navn);
+      var storrelse = a.storrelse ? Kjorer.verdi(miljo, a.storrelse) : 120;
+
+      Verden.tegnI(miljo.lag, {
+        form: "ikon",
+        x: x, y: y,
+        storrelse: storrelse,
+        farge: miljo.farge,
+        tekst: navn
+      });
+      Skjerm.leggTilIkon(miljo.eier, navn, x, y, storrelse);
+    }
+  });
+
+  /* ---- åpneProgram(); ---------------------------------------------------
+     Åpner kodeverktøyet inne på maskinen. */
+  definer({
+    type: "aapneProgram",
+    erBlokk: false,
+    html: function () {
+      return funk("åpneProgram") + tegn("();");
+    },
+    kjor: function () {
+      Skjerm.apneProgram();
     }
   });
 
@@ -150,13 +242,14 @@ var Api = (function () {
     }
   });
 
-  /* ---- nårManTrykkerPa("datamaskinen") { ... } --------------------------
-     Brukes fra og med kapittel 2. Ligger her allerede så du ser mønsteret. */
+  /* ---- nårManTrykkerPå("Kode", function () { ... }); --------------------
+     En hendelse som venter på at man trykker på én bestemt ting. */
   definer({
     type: "naarManTrykkerPa",
     erBlokk: true,
-    htmlStart: function (linje) {
-      return funk("nårManTrykkerPå") + tegn("(") + verdiHtml(linje.args.mal) +
+    htmlStart: function (linje, medValg) {
+      return funk("nårManTrykkerPå") + tegn("(") +
+             verdiHtml(linje.args.mal, "mal", medValg) +
              tegn(", ") + nokkel("function") + " " + tegn("() {");
     },
     htmlSlutt: function () { return tegn("});"); },

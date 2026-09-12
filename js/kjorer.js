@@ -14,6 +14,8 @@
 var Kjorer = (function () {
 
   var funksjoner = {};    /* eier -> { navn: { parametre, kropp } } */
+  var globaler = {};      /* eier -> { variabelnavn: verdi } */
+  var flater = {};        /* eier -> "rom" eller "skjerm" */
   var hendelser = [];     /* { type, eier, parametre, kropp, lag } */
   var lagTeller = 0;
   var feilmeldinger = [];
@@ -23,18 +25,28 @@ var Kjorer = (function () {
 
   function avinstaller(eier) {
     delete funksjoner[eier];
+    delete globaler[eier];
+    delete flater[eier];
     hendelser = hendelser.filter(function (h) { return h.eier !== eier; });
     Verden.fjernLagFor(eier);
+    Skjerm.fjernIkonerFor(eier);
   }
 
-  function installer(eier, program) {
+  /*
+    flate sier om programmet hører hjemme i rommet eller inne i datamaskinen.
+    Alt programmet lager - tegninger, ikoner, hendelser - havner der.
+  */
+  function installer(eier, program, flate) {
     avinstaller(eier);
     feilmeldinger = [];
 
     funksjoner[eier] = {};
+    globaler[eier] = {};
+    flater[eier] = flate || "rom";
     samleFunksjoner(eier, program);
 
     var miljo = nyttMiljo(eier, nyttLag(eier));
+    miljo.erToppniva = true;
     kjorLinjer(program, miljo);
 
     /* Hvis programmet lyttet etter fingeren, kjører vi den én gang med
@@ -71,8 +83,12 @@ var Kjorer = (function () {
 
   function nyttLag(eier) {
     var navn = eier + "#" + (lagTeller++);
-    Verden.sikreLag(navn, eier);
+    Verden.sikreLag(navn, eier, flater[eier] || "rom");
     return navn;
+  }
+
+  function flatenTil(eier) {
+    return flater[eier] || "rom";
   }
 
   /* ---------- Kjøring ---------- */
@@ -116,7 +132,11 @@ var Kjorer = (function () {
     kjorLinjer(f.kropp, indre);
   }
 
-  /* Finner den faktiske verdien av et tall, en tekst eller en variabel. */
+  /*
+    Finner den faktiske verdien av et tall, en tekst eller en variabel.
+    Variabler letes først etter der vi står nå, så blant dem som er laget
+    øverst i programmet - de kan brukes overalt.
+  */
   function verdi(miljo, v) {
     if (!v) return 0;
     if (v.k === "tall" || v.k === "tekst") return v.v;
@@ -124,10 +144,24 @@ var Kjorer = (function () {
       if (Object.prototype.hasOwnProperty.call(miljo.variabler, v.v)) {
         return miljo.variabler[v.v];
       }
+      var felles = globaler[miljo.eier] || {};
+      if (Object.prototype.hasOwnProperty.call(felles, v.v)) {
+        return felles[v.v];
+      }
       feil("Variabelen " + v.v + " finnes ikke her.");
       return 0;
     }
     return 0;
+  }
+
+  /* Lagrer en variabel. Er vi øverst i programmet, kan alle bruke den. */
+  function settVariabel(miljo, navn, nyVerdi) {
+    if (miljo.erToppniva) {
+      if (!globaler[miljo.eier]) globaler[miljo.eier] = {};
+      globaler[miljo.eier][navn] = nyVerdi;
+    } else {
+      miljo.variabler[navn] = nyVerdi;
+    }
   }
 
   /* ---------- Hendelser ---------- */
@@ -179,6 +213,8 @@ var Kjorer = (function () {
 
   function nullstillAlt() {
     funksjoner = {};
+    globaler = {};
+    flater = {};
     hendelser = [];
     lagTeller = 0;
     feilmeldinger = [];
@@ -193,6 +229,8 @@ var Kjorer = (function () {
     utlos: utlos,
     harHendelse: harHendelse,
     verdi: verdi,
+    settVariabel: settVariabel,
+    flatenTil: flatenTil,
     hentFeil: hentFeil,
     tomFeil: tomFeil,
     nullstillAlt: nullstillAlt

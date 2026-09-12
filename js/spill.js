@@ -35,9 +35,11 @@
     var maskin = Verden.finn("datamaskin");
     if (maskin) maskin.pa = !!Fremdrift.hentTilstand("datamaskinPa");
 
+    Skjerm.settKanLukkes(!!Fremdrift.hentTilstand("kanForlateSkjermen"));
+
     var installerte = Fremdrift.alleInstallerte();
     for (var i = 0; i < installerte.length; i++) {
-      Kjorer.installer(installerte[i].id, installerte[i].program);
+      Kjorer.installer(installerte[i].id, installerte[i].program, installerte[i].flate);
     }
   }
 
@@ -47,15 +49,36 @@
       Kjorer.utlos("fingerFlytter", [x, y]);
     });
 
-    Input.naarTrykk(function (x, y) {
-      var gjenstand = Verden.trykketPa(x, y);
-      if (gjenstand) {
-        Kjorer.utlos("trykk", [], null, gjenstand.navn || gjenstand.id);
+    Input.naarTrykk(paTrykk);
+  }
+
+  /*
+    Et trykk kan treffe to helt forskjellige steder: i rommet, eller inne på
+    datamaskinens skjerm. Er skjermen oppe, gjelder den.
+  */
+  function paTrykk(x, y) {
+    if (Skjerm.erApen()) {
+      var punkt = Skjerm.fraRom(x, y);
+
+      if (Skjerm.trykketPaTilbake(punkt.x, punkt.y)) {
+        Skjerm.lukkProgram();
+        Skjerm.lukk();
+        return;
       }
-    });
+
+      var ikon = Skjerm.ikonPa(punkt.x, punkt.y);
+      if (ikon) Kjorer.utlos("trykk", [], null, ikon.navn);
+      return;
+    }
+
+    var gjenstand = Verden.trykketPa(x, y);
+    if (gjenstand) {
+      Kjorer.utlos("trykk", [], null, gjenstand.navn || gjenstand.id);
+    }
   }
 
   function ramme() {
+    Skjerm.oppdater();
     Tegning.nyRamme();
     Verden.tegn();
     Effekter.oppdaterOgTegn();
