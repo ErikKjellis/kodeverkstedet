@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#10121b">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Kodeverkstedet</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="bilder/ikon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/stil.css">
+</head>
+<body>
+
+<div id="spillflate">
+
+  <!-- Selve spillverdenen tegnes her -->
+  <canvas id="lerret"></canvas>
+
+  <!-- Liten beskjed nederst i rommet -->
+  <div id="banner" class="skjult"></div>
+
+  <!-- Bit snakker til spilleren -->
+  <div id="dialog" class="skjult">
+    <div id="dialog-avatar">🤖</div>
+    <div id="dialog-innhold">
+      <div id="dialog-navn">Bit</div>
+      <p id="dialog-tekst"></p>
+    </div>
+    <button id="dialog-videre" type="button">Videre ▸</button>
+  </div>
+
+  <!-- Programmeringsvinduet -->
+  <div id="editor" class="skjult">
+
+    <div id="editor-topp">
+      <h2 id="oppgave-tittel"></h2>
+      <p id="oppgave-instruks"></p>
+    </div>
+
+    <div id="kode-omrade">
+      <div id="kodelinjer"></div>
+    </div>
+
+    <div id="editor-bunn">
+      <div id="palett-merkelapp">Trykk på en kodebit for å sette den inn</div>
+      <div id="palett"></div>
+      <div id="editor-knapper">
+        <button id="knapp-hint" type="button">💡 Hint</button>
+        <button id="knapp-kjor" type="button" class="primar">▶ Kjør koden</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Motoren -->
+<script src="js/tegning.js"></script>
+<script src="js/effekter.js"></script>
+<script src="js/input.js"></script>
+<script src="js/verden.js"></script>
+<script src="js/dialog.js"></script>
+<script src="js/fremdrift.js"></script>
+<script src="js/api.js"></script>
+<script src="js/kjorer.js"></script>
+<script src="js/kodeeditor.js"></script>
+<script src="js/kapitler.js"></script>
+
+<!-- Ett kapittel = én fil. Nye kapitler legges til her. -->
+<script src="js/kapitler/kapittel00-rommet.js"></script>
+<script src="js/kapitler/kapittel01-musepeker.js"></script>
+
+<!-- Starter alt -->
+<script src="js/spill.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,403 @@
+/* ==========================================================================
+   Kodeverkstedet - utseende
+   Laget for berøringsskjerm: store knapper, ingen sveving, ingen zoom.
+   ========================================================================== */
+
+:root {
+  --bak:        #10121b;
+  --panel:      #1b1f2e;
+  --panel-lys:  #262c40;
+  --kant:       #39415c;
+  --tekst:      #eef1f8;
+  --tekst-svak: #a2abc4;
+  --gronn:      #3ecb7a;
+  --gul:        #ffd23f;
+  --blaa:       #4f9dff;
+  --roed:       #ff6b57;
+  --lilla:      #b06ef0;
+
+  /* Farger på koden i editoren */
+  --k-nokkel:   #ff8fc8;
+  --k-funk:     #7fd1ff;
+  --k-tekst:    #b6f09c;
+  --k-tall:     #ffc978;
+  --k-var:      #ffd23f;
+  --k-tegn:     #8a93ad;
+  --k-komm:     #6f7896;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--bak);
+  color: var(--tekst);
+  font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.skjult { display: none !important; }
+
+/* ---------- Spillflaten ---------- */
+
+#spillflate {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  width: 100vw;
+}
+
+#lerret {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;   /* hindrer at nettbrettet scroller når han drar fingeren */
+  cursor: none;         /* også på PC: det finnes ingen musepeker før han lager en */
+}
+
+/* ---------- Banner (liten beskjed nederst) ---------- */
+
+#banner {
+  position: absolute;
+  z-index: 70;          /* over både editoren og dialogen */
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  max-width: 86%;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: rgba(16, 18, 27, 0.92);
+  border: 2px solid var(--kant);
+  color: var(--tekst);
+  font-size: 1.05rem;
+  text-align: center;
+  pointer-events: none;
+  animation: dukk-opp 0.25s ease-out;
+}
+
+#banner.viktig {
+  border-color: var(--gul);
+  color: var(--gul);
+}
+
+@keyframes dukk-opp {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ---------- Dialogboksen (Bit snakker) ---------- */
+
+#dialog {
+  position: absolute;
+  z-index: 60;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgba(27, 31, 46, 0.97);
+  border: 3px solid var(--kant);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+  animation: dukk-opp-boks 0.28s ease-out;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+#dialog.feiring {
+  border-color: var(--gul);
+  box-shadow: 0 0 0 3px rgba(255, 210, 63, 0.18), 0 14px 40px rgba(0, 0, 0, 0.55);
+}
+
+@keyframes dukk-opp-boks {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#dialog-avatar {
+  font-size: 2.6rem;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+#dialog-innhold { flex: 1 1 auto; min-width: 0; }
+
+#dialog-navn {
+  font-size: 0.85rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--gronn);
+  margin-bottom: 4px;
+}
+
+#dialog.feiring #dialog-navn { color: var(--gul); }
+
+#dialog-tekst {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  min-height: 1.5em;
+}
+
+#dialog-videre {
+  flex: 0 0 auto;
+  align-self: flex-end;
+  padding: 12px 20px;
+  min-height: 48px;
+  border: none;
+  border-radius: 14px;
+  background: var(--gronn);
+  color: #0d1b12;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+#dialog-videre:active { transform: translateY(2px); }
+
+/* ---------- Programmeringsvinduet ---------- */
+
+#editor {
+  position: absolute;
+  z-index: 40;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(10, 11, 17, 0.96);
+  animation: skyv-opp 0.3s ease-out;
+}
+
+@keyframes skyv-opp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#editor-topp {
+  flex: 0 1 auto;
+  max-height: 30vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 16px 10px;
+  border-bottom: 2px solid var(--kant);
+  background: var(--panel);
+}
+
+#oppgave-tittel {
+  margin: 0 0 3px;
+  font-size: 1.2rem;
+  color: var(--gul);
+}
+
+#oppgave-instruks {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  color: var(--tekst-svak);
+}
+
+#oppgave-instruks b { color: var(--tekst); }
+
+/* Kodeområdet */
+
+#kode-omrade {
+  flex: 1 1 auto;
+  min-height: 30vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 10px 18px;
+}
+
+#kodelinjer {
+  font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.kodelinje {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px 7px calc(10px + var(--dybde) * 26px);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  min-height: 46px;
+}
+
+.kodelinje.kanvelges:active { background: rgba(255, 255, 255, 0.05); }
+
+.kodelinje.valgt {
+  background: rgba(79, 157, 255, 0.13);
+  border-color: var(--blaa);
+}
+
+.kodelinje.laast .kode { opacity: 0.82; }
+
+.kodelinje .kode {
+  flex: 1 1 auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.kodelinje .verktoy {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 6px;
+}
+
+.kodelinje .verktoy button {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 2px solid var(--kant);
+  background: var(--panel-lys);
+  color: var(--tekst);
+  font-size: 1rem;
+}
+
+.kodelinje .verktoy button[data-handling="slett"] {
+  border-color: #6b3a37;
+  color: var(--roed);
+}
+
+/* Tom plass inni en blokk */
+.tomplass {
+  margin: 4px 0 4px 0;
+  padding: 10px 12px;
+  padding-left: calc(12px + var(--dybde) * 26px);
+  color: var(--k-komm);
+  font-style: italic;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  font-size: 0.95rem;
+}
+
+.tomplass span {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 2px dashed var(--kant);
+  border-radius: 10px;
+}
+
+/* Der neste kodebit havner */
+.settes-inn-her {
+  height: 0;
+  border-top: 3px solid var(--gronn);
+  margin: 0 10px 0 calc(10px + var(--dybde) * 26px);
+  position: relative;
+}
+
+.settes-inn-her::after {
+  content: "her";
+  position: absolute;
+  left: 0;
+  top: -11px;
+  background: var(--gronn);
+  color: #0d1b12;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 6px;
+}
+
+/* Fargelegging av koden */
+.k-nokkel { color: var(--k-nokkel); }
+.k-funk   { color: var(--k-funk); }
+.k-tekst  { color: var(--k-tekst); }
+.k-tall   { color: var(--k-tall); }
+.k-var    { color: var(--k-var); }
+.k-tegn   { color: var(--k-tegn); }
+.k-komm   { color: var(--k-komm); font-style: italic; }
+
+/* Paletten nederst */
+
+#editor-bunn {
+  flex: 0 0 auto;
+  border-top: 2px solid var(--kant);
+  background: var(--panel);
+  padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+}
+
+#palett-merkelapp {
+  font-size: 0.8rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--tekst-svak);
+  margin-bottom: 8px;
+}
+
+#palett {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 25vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.palettknapp {
+  padding: 10px 13px;
+  min-height: 48px;
+  border-radius: 12px;
+  border: 2px solid var(--kant);
+  background: var(--panel-lys);
+  color: var(--tekst);
+  font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+  font-size: 0.92rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.palettknapp:active {
+  background: var(--kant);
+  transform: translateY(2px);
+}
+
+#editor-knapper {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#editor-knapper button {
+  flex: 1 1 auto;
+  min-height: 52px;
+  border-radius: 14px;
+  border: 2px solid var(--kant);
+  background: var(--panel-lys);
+  color: var(--tekst);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+#editor-knapper button.primar {
+  flex: 2 1 auto;
+  border-color: transparent;
+  background: var(--gronn);
+  color: #0d1b12;
+  font-weight: 700;
+}
+
+#editor-knapper button:active { transform: translateY(2px); }
+
+/* Liggende format på små skjermer: gi koden mer plass */
+@media (orientation: landscape) and (max-height: 560px) {
+  #oppgave-instruks { font-size: 0.92rem; }
+  #palett { max-height: 22vh; }
+  #editor-knapper button { min-height: 48px; }
+  #dialog-tekst { font-size: 1.05rem; }
+}

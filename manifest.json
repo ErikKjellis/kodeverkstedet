@@ -1,0 +1,20 @@
+{
+  "name": "Kodeverkstedet",
+  "short_name": "Kodeverkstedet",
+  "description": "Et programmeringsspill der du bygger spillet mens du spiller det.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#10121b",
+  "theme_color": "#10121b",
+  "lang": "nb",
+  "icons": [
+    {
+      "src": "bilder/ikon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
