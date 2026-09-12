@@ -30,6 +30,7 @@ var Kjorer = (function () {
     hendelser = hendelser.filter(function (h) { return h.eier !== eier; });
     Verden.fjernLagFor(eier);
     Skjerm.fjernIkonerFor(eier);
+    Figur.nullstillFor(eier);
   }
 
   /*

@@ -298,6 +298,13 @@ var KodeEditor = (function () {
     Banner.skjul();
     skjul();
 
+    /* Lager han noe som hører hjemme i rommet, trekker kameraet seg ut av
+       maskinen så han ser det skje der ute. */
+    if (oppgave.flate !== "skjerm") {
+      Skjerm.lukkProgram();
+      Skjerm.lukk();
+    }
+
     Kjorer.tomFeil();
     Kjorer.installer(oppgave.installasjonsId, program, oppgave.flate);
 

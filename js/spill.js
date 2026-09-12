@@ -72,9 +72,12 @@
     }
 
     var gjenstand = Verden.trykketPa(x, y);
-    if (gjenstand) {
-      Kjorer.utlos("trykk", [], null, gjenstand.navn || gjenstand.id);
-    }
+    if (!gjenstand) return;
+
+    /* Trykker man på en datamaskin som står på, går man inn i den. */
+    if (gjenstand.id === "datamaskin" && gjenstand.pa) Skjerm.apne();
+
+    Kjorer.utlos("trykk", [], null, gjenstand.navn || gjenstand.id);
   }
 
   function ramme() {

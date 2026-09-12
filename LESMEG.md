@@ -138,6 +138,7 @@ js/
   input.js                      finger og mus
   verden.js                     rommet, møblene, elevens tegnelag
   skjerm.js                     verdenen inne i datamaskinen
+  figur.js                      personen: mål, kroppsdeler og utseende
   dialog.js                     Bit som snakker, og banneret nederst
   fremdrift.js                  lagring i nettleseren
   api.js                        ALLE kodebitene eleven kan bruke
@@ -148,6 +149,7 @@ js/
     kapittel00-rommet.js        det tomme rommet
     kapittel01-musepeker.js     musepekeren
     kapittel02-skrivebordet.js  skrivebordet inne i maskinen
+    kapittel03-figuren.js       personen som bor i rommet
 ```
 
 ### To steder å være
@@ -164,7 +166,22 @@ En oppgave sier hvilken flate den hører til med `flate: "skjerm"`. Alt programm
 lager – tegninger, ikoner, hendelser – havner der.
 
 **Fra og med kapittel 2 er dette veien til all programmering:** trykk på
-datamaskinen, trykk på ikonet, kod.
+datamaskinen, trykk på ikonet, kod. Et kodesteg som skal gå den veien, merkes
+med `viaMaskinen: true`. Lager oppgaven noe som hører hjemme i rommet, trekker
+kameraet seg automatisk ut av maskinen når han kjører koden – så han ser det
+skje der ute.
+
+### Figuren
+
+Personen bygges av fire deler som hver har sin egen kodelinje. Delene må bli
+enige om målene – en høy figur har jo hodet lenger opp enn en lav – så de deler
+på **én felles lapp** med opplysninger (`figur.js`). Lappen fylles ut mens koden
+leses, og selve tegningen skjer etterpå. Derfor spiller det ingen rolle hvilken
+rekkefølge han skriver delene i.
+
+Trikset som bærer hele kapittelet: **gir han en del mer å jobbe med, gjør den
+mer.** `tegnKropp(x, y)` blir en strek. `tegnKropp(x, y, kroppsform)` blir en
+ordentlig kropp. Samme funksjon, mer å gå på.
 
 ### Hvordan elevens kode virker
 

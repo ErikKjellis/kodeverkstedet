@@ -165,6 +165,50 @@ var Api = (function () {
     }
   });
 
+  /* ---- tegnHode(x, y) / tegnKropp(x, y, kroppsform) / ... ---------------
+     Delene en figur er bygget av.
+
+     Legg merke til den ekstra opplysningen: uten den blir delen en strek,
+     med den blir den ordentlig. Gir du funksjonen mer å jobbe med, gjør den
+     mer. Alle delene deler på én felles lapp, så rekkefølgen hans spiller
+     ingen rolle. */
+  definer({
+    type: "tegnKroppsdel",
+    erBlokk: false,
+    html: function (linje, medValg) {
+      var a = linje.args;
+      var kode = funk("tegn" + storForbokstav(a.del)) + tegn("(") +
+                 verdiHtml(a.x, "x", medValg) + tegn(", ") +
+                 verdiHtml(a.y, "y", medValg);
+      if (a.ekstra) kode += tegn(", ") + verdiHtml(a.ekstra, "ekstra", medValg);
+      if (a.kjonn) kode += tegn(", ") + verdiHtml(a.kjonn, "kjonn", medValg);
+      return kode + tegn(");");
+    },
+    kjor: function (miljo, linje) {
+      var a = linje.args;
+      var x = Kjorer.verdi(miljo, a.x);
+      var y = Kjorer.verdi(miljo, a.y);
+      var lapp = Figur.hentLapp(miljo.eier, miljo.lag, x, y);
+
+      /* Den ekstra opplysningen noteres på den felles lappen. */
+      if (a.ekstra) {
+        var verdi = Kjorer.verdi(miljo, a.ekstra);
+        if (a.del === "bein") lapp.hoyde = verdi;
+        else if (a.del === "kropp") lapp.kroppsform = verdi;
+        else if (a.del === "hode") lapp.harfarge = verdi;
+      }
+      if (a.kjonn) lapp.kjonn = Kjorer.verdi(miljo, a.kjonn);
+
+      Verden.tegnI(miljo.lag, {
+        form: "figurdel",
+        del: a.del,
+        x: x, y: y,
+        lapp: lapp,
+        farge: miljo.farge
+      });
+    }
+  });
+
   /* ---- fyllHeleSkjermen(); ----------------------------------------------
      Maler hele flaten i fargen som gjelder nå. */
   definer({

@@ -129,7 +129,13 @@ var Kapittelmotor = (function () {
       return;
     }
     if (steg.type === "kode") {
-      KodeEditor.apne(steg.oppgave, neste);
+      /* Fra og med kapittel 3 går veien til koden gjennom datamaskinen:
+         trykk på maskinen, trykk på ikonet, kod. */
+      if (steg.viaMaskinen) {
+        gaaViaMaskinen(function () { KodeEditor.apne(steg.oppgave, neste); });
+      } else {
+        KodeEditor.apne(steg.oppgave, neste);
+      }
       return;
     }
     if (steg.type === "egen") {
@@ -138,6 +144,26 @@ var Kapittelmotor = (function () {
     }
     /* Ukjent steg - hopp videre i stedet for å låse spillet. */
     neste();
+  }
+
+  /*
+    Venter til han har gått inn i maskinen og åpnet Kodeverkstedet.
+    Programmet åpnes av HANS egen kode fra kapittel 2 - vi venter bare.
+  */
+  function gaaViaMaskinen(naarKlar) {
+    if (Skjerm.programErApent()) { naarKlar(); return; }
+
+    Banner.vis("Gå til datamaskinen og åpne Kodeverkstedet 💻", {});
+    if (Skjerm.erLukket()) Verden.blink("datamaskin", 900);
+
+    (function vent() {
+      if (Skjerm.programErApent()) {
+        Banner.skjul();
+        naarKlar();
+        return;
+      }
+      requestAnimationFrame(vent);
+    })();
   }
 
   function neste() {

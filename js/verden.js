@@ -237,6 +237,9 @@ var Verden = (function () {
 
     } else if (op.form === "ikon") {
       tegnIkon(op);
+
+    } else if (op.form === "figurdel") {
+      Figur.tegnDel(op);
     }
   }
 
