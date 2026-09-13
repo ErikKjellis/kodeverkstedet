@@ -105,7 +105,16 @@ var Skjerm = (function () {
 
   /* ---------- Programmet han lager i kapittel 2 ---------- */
 
-  function apneProgram() { programAapent = true; }
+  var programLyttere = [];
+
+  /* Kalles av elevens kode (åpneProgram). Spillet får vite det, så det kan
+     åpne riktig verktøy - en oppgave, eller fri lek i verkstedet. */
+  function apneProgram() {
+    programAapent = true;
+    programLyttere.forEach(function (fn) { fn(); });
+  }
+
+  function naarProgrammetApnes(fn) { programLyttere.push(fn); }
   function lukkProgram() { programAapent = false; }
   function programErApent() { return programAapent; }
 
@@ -202,6 +211,7 @@ var Skjerm = (function () {
     ikonPa: ikonPa,
     harIkoner: harIkoner,
     apneProgram: apneProgram,
+    naarProgrammetApnes: naarProgrammetApnes,
     lukkProgram: lukkProgram,
     programErApent: programErApent,
     tegn: tegn,

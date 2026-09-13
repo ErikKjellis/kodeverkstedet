@@ -367,4 +367,29 @@
 
   });
 
+  /* Det han har lært her, får han bruke fritt i Kodeverkstedet. */
+  Verksted.navngi("skrivebord", "Skrivebordet", "🖥️", "Bakgrunnen og ikonene inne i maskinen");
+  Verksted.leggTilBiter("skrivebord", [
+    FYLL_MED_VARIABEL, FYLL_HELE, fyllFarge("hvit"), fyllFarge("gul"), fyllFarge("grønn"),
+    fyllFarge("rosa"), LAG_IKON, TRYKK_PA_IKON, AAPNE_PROGRAM
+  ]);
+
+  /*
+    Sletter han veien inn til Kodeverkstedet, kommer han aldri tilbake til
+    koden sin. Da sier Bit nei før koden kjøres.
+  */
+  Verksted.beskytt("skrivebord", function (program) {
+    var ikon = Kode.forste(program, "lagIkon");
+    var hendelse = ikon && Kode.hendelse(program, "naarManTrykkerPa", ikon.args.navn.v);
+    var aapner = hendelse && Kode.utvid(program, hendelse.barn).some(function (s) {
+      return s.type === "aapneProgram";
+    });
+    if (aapner) return null;
+    return [
+      "Stopp litt! ✋ Kjører du denne koden, finnes det ikke lenger noen vei inn til Kodeverkstedet.",
+      "Da kommer du aldri tilbake til koden din.",
+      "Skrivebordet må ha et ikon, og en nårManTrykkerPå med samme navn som åpner programmet med åpneProgram();"
+    ];
+  });
+
 })();

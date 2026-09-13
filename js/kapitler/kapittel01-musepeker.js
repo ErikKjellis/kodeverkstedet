@@ -315,4 +315,9 @@
 
   });
 
+  /* Det han har lært her, får han bruke fritt i Kodeverkstedet. */
+  Verksted.navngi("musepeker", "Musepekeren", "👆", "Formen og fargen på pekeren din");
+  Verksted.leggTilBiter("musepeker",
+    FARGEBITER.concat(FORMBITER).concat([FINGERHENDELSE, TEGN_MUSEPEKER_KALL]));
+
 })();

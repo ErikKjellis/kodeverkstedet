@@ -671,4 +671,15 @@
 
   });
 
+  /* Det han har lært her, får han bruke fritt i Kodeverkstedet. */
+  Verksted.leggTilBiter("figur", [
+    TEGN_FIGUR_HER,
+    HVERT_BILDE,
+    FLYTT_MED_FART,
+    flytt("-", 20, [10, 20, 50]),
+    lagKnapp("Høyre", STYRENAVN),
+    trykkPa("Høyre", STYRENAVN),
+    SETT_FART
+  ]);
+
 })();

@@ -10,3 +10,6 @@ desktop.ini
 *.tmp
 *.bak
 *~
+
+# Lokale testhjelpere, ikke en del av spillet
+test-lokal/

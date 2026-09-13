@@ -12,7 +12,7 @@
 
 var KodeEditor = (function () {
 
-  var el, kodeEl, palettEl, tittelEl, instruksEl, hintKnapp, kjorKnapp;
+  var el, kodeEl, palettEl, tittelEl, instruksEl, hintKnapp, kjorKnapp, lukkKnapp;
 
   var program = [];
   var oppgave = null;
@@ -36,6 +36,15 @@ var KodeEditor = (function () {
     palettEl.addEventListener("click", paPalettTrykk);
     hintKnapp.addEventListener("click", visHint);
     kjorKnapp.addEventListener("click", kjor);
+
+    /* Bare i fri lek: gå ut uten å kjøre det han har endret. */
+    lukkKnapp = document.getElementById("knapp-lukk");
+    lukkKnapp.addEventListener("click", function () {
+      skjul();
+      var ferdig = naarFerdig;
+      naarFerdig = null;
+      if (ferdig) ferdig();
+    });
   }
 
   /* ---------- Åpne og lukke ---------- */
@@ -57,6 +66,7 @@ var KodeEditor = (function () {
     palett = verdiEllerFunksjon(oppgave.palett) || [];
     instruksEl.innerHTML = verdiEllerFunksjon(oppgave.instruks) || "";
     hintKnapp.classList.toggle("skjult", !oppgave.hint || oppgave.hint.length === 0);
+    lukkKnapp.classList.toggle("skjult", !oppgave.fri);
 
     /* Programmerer han inne i maskinen, skal skjermen være oppe bak vinduet. */
     if (oppgave.flate === "skjerm") Skjerm.apne();
@@ -334,6 +344,13 @@ var KodeEditor = (function () {
     var resultat = oppgave.sjekk(program, Kjorer.hentFeil());
 
     if (!resultat.ok) {
+      /* I fri lek betyr nei at koden ikke skal gjelde. Den er allerede kjørt,
+         så vi setter det lagrede programmet i gang igjen - ellers kunne en
+         ødelagt versjon (uten vei inn til verkstedet) blitt hengende. */
+      if (oppgave.fri) {
+        var lagret = Fremdrift.hentInstallert(oppgave.installasjonsId);
+        if (lagret) Kjorer.installer(oppgave.installasjonsId, lagret, oppgave.flate);
+      }
       if (resultat.provForst) {
         provForst(resultat);
       } else {
@@ -343,6 +360,17 @@ var KodeEditor = (function () {
     }
 
     Fremdrift.installer(oppgave.installasjonsId, program, oppgave.flate);
+
+    /* Fri lek: ingen feiring, bare en liten bekreftelse - og han er fri igjen. */
+    if (oppgave.fri) {
+      var ferdig = naarFerdig;
+      naarFerdig = null;
+      Banner.vis(oppgave.flate === "skjerm"
+        ? "✓ Koden din kjører. Trykk på Kode-ikonet for å kode videre."
+        : "✓ Koden din kjører. Trykk på datamaskinen for å kode videre.", { varighet: 4000 });
+      if (ferdig) ferdig();
+      return;
+    }
 
     if (oppgave.bekreftIVerden) {
       ventPaVerden(resultat);

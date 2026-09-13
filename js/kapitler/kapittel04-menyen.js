@@ -542,4 +542,16 @@
 
   });
 
+  /* Det han har lært her, får han bruke fritt i Kodeverkstedet.
+     (tegnFigur med fast plass meldes ikke inn - fra kapittel 5 står figuren på figurX.) */
+  Verksted.leggTilBiter("figur", [
+    lagKnapp("Lav", true),
+    trykkPa("Lav", true),
+    endre("hoyde", "lav", ["lav", "vanlig", "høy"]),
+    endre("harfarge", "blond", ["blond", "brun", "svart", "rød"]),
+    VISK_UT,
+    HJELPEFUNKSJON,
+    KALL_HJELPER
+  ]);
+
 })();

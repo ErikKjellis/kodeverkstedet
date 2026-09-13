@@ -265,16 +265,25 @@ var Kapittelmotor = (function () {
 
   /* Vises når han har spilt gjennom alle kapitlene som finnes. Skal ikke
      love noe bestemt om neste kapittel - da blir teksten gammel med en gang. */
+  var alleFerdige = false;
+
   function alleKapitlerFerdige() {
+    alleFerdige = true;
+    /* Står programvinduet fortsatt åpent fra siste oppgave, lukker vi det -
+       neste gang han åpner det, skal det være verkstedet. */
+    Skjerm.lukkProgram();
     Dialog.si([
       "Der var alt jeg har å vise deg for nå.",
       "Men spillet ditt er ikke ferdig – det er så vidt begynt!",
-      "Alt du har laget blir liggende her til neste gang. 👋"
+      "Gå til datamaskinen og åpne Kodeverkstedet når du vil. Alle programmene dine ligger der, og du kan endre dem som du vil. 🛠️"
     ], function () {
-      Banner.vis("Flere kapitler kommer snart!", {});
+      Banner.vis("Flere kapitler kommer snart!", { varighet: 5000 });
     });
   }
 
-  return { start: start };
+  /* Er han ferdig med alle kapitlene som finnes, er han fri til å kode som han vil. */
+  function erFri() { return alleFerdige; }
+
+  return { start: start, erFri: erFri };
 
 })();

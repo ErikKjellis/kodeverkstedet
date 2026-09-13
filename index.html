@@ -46,11 +46,22 @@
       <div id="palett-merkelapp">Trykk på en kodebit for å sette den inn</div>
       <div id="palett"></div>
       <div id="editor-knapper">
+        <button id="knapp-lukk" type="button" class="skjult">✕ Lukk</button>
         <button id="knapp-hint" type="button">💡 Hint</button>
         <button id="knapp-kjor" type="button" class="primar">▶ Kjør koden</button>
       </div>
     </div>
 
+  </div>
+
+  <!-- Kodeverkstedet når ingen oppgave venter: velg et av programmene dine -->
+  <div id="verksted" class="skjult">
+    <div id="verksted-boks">
+      <h2>Kodeverkstedet</h2>
+      <p>Velg et program du vil jobbe med.</p>
+      <div id="verksted-liste"></div>
+      <button id="verksted-lukk" type="button">Lukk</button>
+    </div>
   </div>
 
 </div>
@@ -68,6 +79,7 @@
 <script src="js/api.js"></script>
 <script src="js/kjorer.js"></script>
 <script src="js/kodeeditor.js"></script>
+<script src="js/verksted.js"></script>
 <script src="js/kapitler.js"></script>
 
 <!-- Ett kapittel = én fil. Nye kapitler legges til her. -->

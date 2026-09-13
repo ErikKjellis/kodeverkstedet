@@ -407,4 +407,11 @@
 
   });
 
+  /* Det han har lært her, får han bruke fritt i Kodeverkstedet. */
+  Verksted.navngi("figur", "Figuren", "🧍", "Utseendet, menyen og bevegelsene");
+  Verksted.leggTilBiter("figur", [
+    del("bein", "hoyde"), del("kropp", "kroppsform"), del("armer"), del("hode", "harfarge", "kjonn"),
+    del("bein"), del("kropp"), del("hode")
+  ].concat(KLESFARGER));
+
 })();

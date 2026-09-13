@@ -17,6 +17,7 @@
     Input.start(lerret);
     Dialog.start();
     KodeEditor.start();
+    Verksted.start();
 
     Verden.lagStandardrom();
 
@@ -50,6 +51,13 @@
     });
 
     Input.naarTrykk(paTrykk);
+
+    /* Åpner han Kodeverkstedet uten at noen oppgave venter, får han fri lek. */
+    Skjerm.naarProgrammetApnes(function () {
+      if (Kapittelmotor.erFri() && !KodeEditor.erApen() && !Verksted.erApen()) {
+        Verksted.apne();
+      }
+    });
   }
 
   /*
