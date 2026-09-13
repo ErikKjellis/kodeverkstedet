@@ -54,6 +54,27 @@
 
   </div>
 
+  <!-- Tegneprogrammet: 16 x 16 ruter, ti farger, ett siffer per rute -->
+  <div id="tegneboka" class="skjult">
+    <div id="tb-topp">
+      <h2>🎨 Tegneboka</h2>
+      <button id="tb-tall" type="button">🔢 Tall</button>
+      <button id="tb-lukk" type="button">✕ Lukk</button>
+    </div>
+    <p id="tb-hint"></p>
+    <div id="tb-midt">
+      <div id="tb-rutenett"></div>
+      <div id="tb-farger"></div>
+    </div>
+    <div id="tb-bunn">
+      <label for="tb-navn">Navn:</label>
+      <input id="tb-navn" type="text" maxlength="12" autocomplete="off" spellcheck="false">
+      <button id="tb-tom" type="button">Tøm</button>
+      <button id="tb-lagre" type="button" class="primar">💾 Lagre</button>
+    </div>
+    <div id="tb-mine"></div>
+  </div>
+
   <!-- Kodeverkstedet når ingen oppgave venter: velg et av programmene dine -->
   <div id="verksted" class="skjult">
     <div id="verksted-boks">
@@ -80,6 +101,7 @@
 <script src="js/kjorer.js"></script>
 <script src="js/kodeeditor.js"></script>
 <script src="js/verksted.js"></script>
+<script src="js/tegneboka.js"></script>
 <script src="js/kapitler.js"></script>
 
 <!-- Ett kapittel = én fil. Nye kapitler legges til her. -->
@@ -91,6 +113,7 @@
 <script src="js/kapitler/kapittel05-bevegelse.js"></script>
 <script src="js/kapitler/kapittel06-lagring.js"></script>
 <script src="js/kapitler/kapittel07-veggen.js"></script>
+<script src="js/kapitler/kapittel08-tegneboka.js"></script>
 
 <!-- Starter alt -->
 <script src="js/spill.js"></script>

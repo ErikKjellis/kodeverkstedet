@@ -330,12 +330,12 @@ var KodeEditor = (function () {
     Banner.skjul();
     skjul();
 
-    /* Lager han noe som hører hjemme i rommet, trekker kameraet seg ut av
-       maskinen så han ser det skje der ute. */
-    if (oppgave.flate !== "skjerm") {
-      Skjerm.lukkProgram();
-      Skjerm.lukk();
-    }
+    /* Programvinduet lukkes alltid når koden kjøres - ellers ligger det oppå
+       skrivebordet og skjuler det han nettopp har laget der.
+       Lager han noe som hører hjemme i rommet, trekker kameraet seg også ut av
+       maskinen, så han ser det skje der ute. */
+    Skjerm.lukkProgram();
+    if (oppgave.flate !== "skjerm") Skjerm.lukk();
 
     Kjorer.tomFeil();
     Kjorer.installer(oppgave.installasjonsId, program, oppgave.flate);

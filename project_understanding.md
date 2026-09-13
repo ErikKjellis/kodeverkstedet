@@ -4,7 +4,7 @@ Dette dokumentet er min forståelse av hva vi holder på med, hvilke valg du har
 tatt, hva som er bygget, og hva som står for tur. **Planen er styrt av dine valg.**
 Der jeg foreslår noe på egen hånd, står det uttrykkelig.
 
-Sist oppdatert: 13. september 2026 (etter kapittel 7).
+Sist oppdatert: 13. september 2026 (etter kapittel 8).
 
 ---
 
@@ -60,6 +60,7 @@ Disse ligger fast med mindre du sier noe annet.
 | **Styring med knapper først** | Figuren styres med knapper i menyen. Å dra med fingeren kan komme senere. |
 | **Lagreknappen programmerer han selv** | Ikke en ferdig knapp: han oppdager at spillet glemmer, og lager lagring og henting. |
 | **Veggen før tegneprogrammet** | Meny, bevegelse, lagring, vegg – så tegneprogram og animasjon. |
+| **Tegneboka: bare ikon og åpning** | Han bygger ikonet som åpner tegneprogrammet. Selve verktøyet får han. |
 | **Tegneprogrammet** | Et program på skrivebordet der han tegner enkle tegninger, som senere blir grafikk og animasjon i spillet. |
 | **16 × 16 i tegneprogrammet** | Til å begynne med. Vi ser om det er avansert nok når han har prøvd. |
 
@@ -275,6 +276,38 @@ figuren fast ved veggen når han prøver å gå bort fra den.
 **Lærer:** **`if`** – et spørsmål i koden, og at et program kan ta valg. Og
 forskjellen på `<` og `>`.
 
+### Kapittel 8 – Tegneboka
+**Ditt valg:** han bygger bare ikonet og åpningen – selve tegneverktøyet får han.
+
+**Et nytt ikon.** «Tegning» på skrivebordet, koblet til `åpneTegneboka()`. Samme
+mønster som Kode-ikonet i kapittel 2, nå uten hjelp. Står ikonet oppå Kode-ikonet,
+sier Bit fra.
+
+**Tegn noe.** Et 16 × 16 rutenett, ti farger og et navn å lagre under. Han maler
+ved å dra fingeren. Tegningen må ha litt innhold før den teller.
+
+**Hemmeligheten.** Han trykker «🔢 Tall», og tegningen blir til 256 sifre. 0 er
+tom, 3 er rød, 5 er gul – tallet står på hver fargeknapp. Ti farger er et bevisst
+valg: da er hver rute ett siffer, og tallene står i et ryddig rutenett.
+
+**Sett den i rommet.** I et nytt program, *Pynten*:
+
+```javascript
+tegnBilde("blomst", 200, 600, 160);
+```
+
+**Koblingen.** Han endrer tegningen i Tegneboka, lagrer og går tilbake til rommet –
+og tegningen har endret seg der også. Han rørte ikke koden; han endret bare
+tallene, og koden leser tallene.
+
+**Lærer:** at grafikk er data, og at det han tegner og det han koder er laget av
+det samme stoffet.
+
+**Rettet underveis:** Kodeverkstedets vindu ble liggende oppå skrivebordet etter at
+koden var kjørt, og skjulte det nye ikonet. Og etter en omstart åpnet Tegneboka et
+tomt ark, så «hemmeligheten» ble 256 nuller – nå åpner den tegningen han sist
+jobbet med.
+
 ### Motoren slik den står nå
 To flater, `"rom"` og `"skjerm"`, begge med koordinatsystem 1000 × 700. Elevens
 program lagres som data og tolkes – ikke `eval`. Alt et program lager merkes med
@@ -292,53 +325,42 @@ regnestykker (`figurX + fart`) eller hentede verdier (`hentLagret(...)`). Kodebi
 `if` har et trykkbart sammenligningstegn. Felles hjelpere til oppgavesjekkene ligger
 i `Kode` i `js/kapitler.js`, og kodebitene til fri lek meldes inn i `Verksted`.
 
+Tegneboka (`js/tegneboka.js`) er et eget verktøy inne i maskinen. Tegninger lagres
+som 256 sifre under et navn i `Fremdrift`, og `tegnBilde` leser dem på nytt hvert
+bilde – derfor vises en endret tegning med en gang.
+
 ---
 
 ## 7. Hva vi skal gjøre
 
-### Kapittel 8 – Tegneprogrammet  ← neste
+### Kapittel 9 – Animasjon  ← neste
 
-**Din idé:** et program på skrivebordet der man kan tegne enkle tegninger, som vi
-siden bruker som grafikk i spillet.
+Her møtes bevegelse og Tegneboka. Han tegner to bilder – ett med venstre fot fram,
+ett med høyre – og bytter mellom dem i spilløkka mens noe går. Det er animasjon,
+og han har laget begge bildene selv.
 
-Et nytt ikon – *Tegneboka* – åpner et **16 × 16** rutenett han kan male i med
-fingeren, en fargepalett, og et navn å lagre tegningen under. Selve
-tegneverktøyet er noe vi gir ham, på samme måte som Kodeverkstedet. Det han
-bygger selv, er ikonet og åpningen – slik han gjorde i kapittel 2.
-
-Så kommer poenget. En ny kodebit:
+Et mulig oppsett, som bygger på alt han kan:
 
 ```javascript
-tegnBilde("blomst", 300, 520, 80);
+var bildeNr = 1;
+var teller = 0;
+
+hvertBilde(function () {
+  teller = teller + 1;
+  if (teller > 10) {
+    teller = 0;
+    bildeNr = 3 - bildeNr;      // eller: if/else som bytter mellom 1 og 2
+  }
+  ...
+});
 ```
 
-Blomsten han nettopp tegnet står nå i rommet.
-
-Og deretter avsløringen: Bit viser ham at tegningen hans **bare er en liste med
-tall**. Hver rute er et tall, hvert tall er en farge. Koden leser den samme lista.
-
-**Lærer:** koblingen mellom det visuelle og koden. At grafikk er data. At en
-tegning og et program er laget av det samme stoffet.
-
-**Bygger på kapittel 2 og 6:** han har allerede laget et ikon som åpner et
-program, og han vet at ting kan lagres under et navn. En tegning er bare en ny
-slags lapp.
-
-**Motoren må lære seg:** en egen skjerm for tegneverktøyet inne i maskinen (ikke
-kodeeditoren), lagring av tegninger under et navn, og en måte å vise lista med
-tall på som en tiåring faktisk kan lese. Verkstedlista må også kunne åpne
-Tegneboka.
-
-### Kapittel 9 – Animasjon
-
-Her møtes bevegelse og tegneprogrammet. Han tegner to bilder av figuren i
-Tegneboka – ett med venstre fot fram, ett med høyre – og bytter mellom dem i
-spilløkka mens figuren går. Det er animasjon, og han har laget begge bildene
-selv.
-
 **Lærer:** at animasjon bare er bilder som byttes fort nok. At det han tegner og
-det han koder henger sammen. Og trolig `if`/`else` for å velge bilde – som han
-nå har et godt grunnlag for.
+det han koder henger sammen. Og trolig `else`, eller en teller – tid som begrep.
+
+**Motoren må lære seg:** lite. `tegnBilde` kan allerede ta både navn og plass fra
+variabler – det som mangler, er kodebitene som gjør det. Muligens å speilvende et
+bilde når det går den andre veien.
 
 ### Videre – skissen
 
@@ -348,7 +370,7 @@ Rekkefølgen er ikke spikret, og begrepene bestemmer den mer enn møblene gjør.
 |---|---|
 | Lys som kan slås av og på | `if`/`else`, sant og usant |
 | En stol å sitte på | kollisjon, tilstand |
-| Et vindu å se ut av | lag og dybde |
+| Et vindu å se ut av | lag og dybde – hva som tegnes foran og bak |
 | Flere ikoner på skrivebordet | **løkke** – gjør det samme for hver ting i en liste |
 | Figuren blir sulten | variabler som endrer seg over tid, tid som begrep |
 | En fiende | flere figurer, kollisjon som betyr noe |
@@ -358,10 +380,12 @@ Rekkefølgen er ikke spikret, og begrepene bestemmer den mer enn møblene gjør.
 
 ## 8. Ting jeg vil at du skal bestemme
 
-1. **Hvor mye av Tegneboka skal han bygge selv?** Planen er at han bygger ikonet
-   og åpningen, mens selve tegneverktøyet er gitt. Det alternative er at han også
-   bygger en enkel versjon av rutenettet – mer lærerikt, men et mye lengre
-   kapittel.
+1. **Hva skal animeres i kapittel 9?** To muligheter:
+   * **Figuren hans blir tegnet.** Han tegner figuren sin i Tegneboka, og den
+     tegnede figuren erstatter strekfiguren. Stor forvandling – men menyen fra
+     kapittel 4 (høy/lav, hårfarge) virker ikke på en tegning.
+   * **Noe nytt i rommet får liv.** En katt, en fugl eller en robot han tegner i to
+     versjoner, som går fram og tilbake. Strekfiguren og menyen blir som de er.
 2. **Skal Bit ha en annen stemme etter hvert?** Han er ganske ivrig nå. Det
    passer for en tiåring som er fersk, men kan bli mye om et år.
 3. **Hvordan gikk det da han prøvde?** Alt over er fortsatt mine antagelser om hva
@@ -370,7 +394,7 @@ Rekkefølgen er ikke spikret, og begrepene bestemmer den mer enn møblene gjør.
 
 ## 9. Det jeg er usikker på
 
-* **Tempoet.** Kapittel 3, 5 og 6 har flere oppgaver hver. Det kan være mye i
+* **Tempoet.** Kapittel 3, 5, 6 og 8 har flere oppgaver hver. Det kan være mye i
   strekk for én økt.
 * **Om paletten blir for full.** I fri lek har Figuren nå over tretti kodebiter.
   Den trenger trolig grupper (Utseende, Meny, Bevegelse, Lagring, Vegger).
@@ -380,6 +404,9 @@ Rekkefølgen er ikke spikret, og begrepene bestemmer den mer enn møblene gjør.
 * **Om menyen blir for rotete.** Knappene står i den rekkefølgen koden lager dem,
   så «Lagre» og «Stopp» havner hulter til bulter. Grupper av knapper er en mulig
   senere forbedring.
+* **Om 16 × 16 er nok.** Det er grovt – bra for å se at det er tall bak, men kanskje
+  for grovt til en figur med ansikt. Det kan økes senere, men da må tegningene han
+  allerede har lagret gjøres om, og tallvisningen blir tettere.
 * **Om han kommer til å ville lese koden i det hele tatt**, eller bare trykke til
   det virker. Begge deler er greit i starten – men leksjonene om rekkefølge og
   tegn er bygget på at han faktisk ser hva som står.

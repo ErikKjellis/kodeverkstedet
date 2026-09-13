@@ -43,6 +43,11 @@ var Verksted = (function () {
     var liste = biter[id] || [];
     var sett = liste.map(function (b) { return JSON.stringify(b); });
     nye.forEach(function (b) {
+      /* En funksjon lager kodebiten når verkstedet åpnes - den kan ikke sammenlignes. */
+      if (typeof b === "function") {
+        liste.push(b);
+        return;
+      }
       var tekst = JSON.stringify(b);
       if (sett.indexOf(tekst) === -1) {
         liste.push(b);
@@ -105,7 +110,9 @@ var Verksted = (function () {
       fri: true,
       valgtVedStart: "siste",
       startProgram: function () { return Fremdrift.hentInstallert(id) || []; },
-      palett: biter[id] || [],
+      /* En kodebit kan være en funksjon, når valgene avhenger av det han har
+         laget - f.eks. navnene på tegningene hans. */
+      palett: (biter[id] || []).map(function (b) { return typeof b === "function" ? b() : b; }),
       hint: [],
       sjekk: function (program) {
         var nei = vern[id] ? vern[id](program) : null;

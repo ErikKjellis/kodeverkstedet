@@ -146,6 +146,7 @@ js/
   kjorer.js                     kjører elevens program
   kodeeditor.js                 programmeringsvinduet
   verksted.js                   Kodeverkstedet som fritt verktøy etter siste kapittel
+  tegneboka.js                  tegneprogrammet: 16 x 16 ruter, ti farger
   kapitler.js                   kapittelmotoren + hjelpere til oppgavesjekk
   kapitler/
     kapittel00-rommet.js        det tomme rommet
@@ -156,6 +157,7 @@ js/
     kapittel05-bevegelse.js     figuren går, og knappene styrer den
     kapittel06-lagring.js       lagre og hente
     kapittel07-veggen.js        første if
+    kapittel08-tegneboka.js     tegneprogrammet, og at grafikk er tall
 ```
 
 ### To steder å være
@@ -321,6 +323,18 @@ av typen `op`, med en `valg`-liste som gjør det trykkbart:
 op: { k: "op", v: "<", valg: ["<", ">"] }
 ```
 
+### Tegneboka
+
+Tegneprogrammet (`js/tegneboka.js`) er et ferdig verktøy, som Kodeverkstedet. Det
+åpnes med kodebiten `åpneTegneboka()`.
+
+En tegning er 256 sifre (16 x 16), lagret under et navn i `Fremdrift`. Hvert siffer
+er en farge fra `Tegneboka.FARGER` – 0 er tom. Det er med vilje bare ti farger, så
+hver rute blir ett siffer når han trykker «🔢 Tall».
+
+`tegnBilde("navn", x, y, størrelse)` leser sifrene på nytt hvert bilde, så en endret
+tegning vises med en gang. x er midten av bildet, y er bunnen – der det står.
+
 ### Kodeverkstedet – fri lek
 
 Når alle kapitlene er spilt, åpner Kode-ikonet en liste over programmene hans i
@@ -333,7 +347,11 @@ Verksted.leggTilBiter("stol", [ /* kodebiter han har lært */ ]);
 ```
 
 Et program kan beskytte seg mot endringer som ville låst ham ute av spillet med
-`Verksted.beskytt(id, function (program) { ... })`. Returnerer funksjonen en
+`Verksted.beskytt(id, function (program) { ... })`.
+
+En kodebit i `leggTilBiter` kan også være en **funksjon** som lager kodebiten når
+verkstedet åpnes – nyttig når valgene avhenger av det han har laget, som navnene
+på tegningene hans. Returnerer funksjonen en
 melding, kjøres ikke koden, og det lagrede programmet settes i gang igjen.
 
 ### Hjelpere til oppgavesjekker

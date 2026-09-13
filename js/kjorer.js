@@ -279,6 +279,7 @@ var Kjorer = (function () {
     kjorLinjer: kjorLinjer,
     flatenTil: flatenTil,
     hentFeil: hentFeil,
+    feil: feil,
     tomFeil: tomFeil,
     nullstillAlt: nullstillAlt
   };

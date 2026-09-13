@@ -497,6 +497,148 @@ button {
   font-size: 1rem;
 }
 
+/* ---------- Tegneboka ---------- */
+
+#tegneboka {
+  position: absolute;
+  z-index: 45;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(10, 11, 17, 0.97);
+  animation: skyv-opp 0.3s ease-out;
+  overflow-y: auto;
+}
+
+#tb-topp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#tb-topp h2 { flex: 1 1 auto; margin: 0; font-size: 1.25rem; color: var(--gul); }
+
+#tb-topp button, #tb-bunn button, .tb-min {
+  min-height: 46px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 2px solid var(--kant);
+  background: var(--panel-lys);
+  color: var(--tekst);
+  font-size: 1rem;
+}
+
+#tb-bunn button.primar {
+  border-color: transparent;
+  background: var(--gronn);
+  color: #0d1b12;
+  font-weight: 700;
+}
+
+#tb-topp button:active, #tb-bunn button:active, .tb-min:active, .tb-farge:active {
+  box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+#tb-hint { margin: 0; min-height: 1.3em; color: var(--gronn); font-size: 1rem; }
+
+#tb-midt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+#tb-rutenett {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  width: min(94vw, 62vh);
+  aspect-ratio: 1 / 1;
+  border: 3px solid var(--kant);
+  border-radius: 6px;
+  background: #0b0d14;
+  touch-action: none;       /* fingeren maler, den ruller ikke siden */
+  user-select: none;
+}
+
+.tb-rute {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+  font-size: min(2.6vw, 1.7vh);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Tomme ruter får et svakt rutemønster, så man ser at de er tomme. */
+.tb-rute.tb-tom {
+  background-image: linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.03) 75%);
+  background-size: 8px 8px;
+}
+
+#tegneboka.tb-tallmodus .tb-rute.tb-tom { color: rgba(255, 255, 255, 0.35); }
+.tb-rute.tb-morkt-tall { color: rgba(0, 0, 0, 0.75); }
+
+#tb-farger {
+  display: grid;
+  grid-template-columns: repeat(5, 52px);
+  gap: 8px;
+}
+
+.tb-farge {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  border: 3px solid var(--kant);
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.tb-farge span {
+  display: inline-block;
+  min-width: 22px;
+  padding: 0 4px;
+  border-radius: 6px;
+  background: rgba(16, 18, 27, 0.75);
+  color: #fff;
+}
+
+.tb-farge.valgt { border-color: #fff; box-shadow: 0 0 0 3px var(--blaa); }
+
+.tb-viskelaer {
+  background: repeating-conic-gradient(#39415c 0% 25%, #262c40 0% 50%) 50% / 16px 16px;
+}
+
+#tb-bunn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+#tb-bunn label { color: var(--tekst-svak); }
+
+#tb-navn {
+  flex: 1 1 140px;
+  min-height: 46px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 2px solid var(--kant);
+  background: var(--panel);
+  color: var(--tekst);
+  font-size: 1.05rem;
+  user-select: text;
+}
+
+#tb-mine { display: flex; flex-wrap: wrap; gap: 8px; }
+.tb-ingen { color: var(--tekst-svak); font-size: 0.9rem; }
+
 /* Liggende format på små skjermer: gi koden mer plass */
 @media (orientation: landscape) and (max-height: 560px) {
   #oppgave-instruks { font-size: 0.92rem; }

@@ -67,6 +67,7 @@ eneste tegn.
 | 5 · Bevegelse | en figur som går, og knapper som styrer den | **spilløkka** – seksti ganger i sekundet, og å regne med variabler |
 | 6 · Lagring | en Lagre-knapp, og at spillet henter det lagrede når det starter | at programmer **glemmer**, å lagre og hente, standardverdi |
 | 7 · Veggen | vegger figuren ikke kan gå gjennom | **`if`** – et spørsmål i koden, og forskjellen på `<` og `>` |
+| 8 · Tegneboka | et ikon til tegneprogrammet, og en tegning i rommet | at **grafikk er tall** – det han tegner og det han koder er det samme stoffet |
 
 Når alle kapitlene er spilt, blir Kodeverkstedet et fritt verktøy: han velger et
 av programmene sine og endrer det som han vil, med alle kodebitene han har lært.

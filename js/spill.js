@@ -18,6 +18,7 @@
     Dialog.start();
     KodeEditor.start();
     Verksted.start();
+    Tegneboka.start();
 
     Verden.lagStandardrom();
 

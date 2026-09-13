@@ -302,6 +302,31 @@ var Verden = (function () {
 
     } else if (op.form === "figurdel") {
       Figur.tegnDel(op);
+
+    } else if (op.form === "bilde") {
+      tegnBilde(op);
+    }
+  }
+
+  /*
+    En tegning fra Tegneboka: 256 sifre, én firkant for hvert siffer som ikke
+    er 0. Tallene hentes på nytt hver gang, så en endret tegning vises med en
+    gang. x er midten av bildet, y er bunnen - der det står.
+  */
+  function tegnBilde(op) {
+    var ruter = Fremdrift.hentTegning(op.navn);
+    if (!ruter) return;
+
+    var n = Tegneboka.STORRELSE;
+    var rute = op.storrelse / n;
+    var venstre = op.x - op.storrelse / 2;
+    var topp = op.y - op.storrelse;
+
+    for (var i = 0; i < ruter.length; i++) {
+      var farge = (Tegneboka.FARGER[ruter[i]] || {}).farge;
+      if (!farge) continue;
+      /* Litt ekstra på hver rute, så det ikke blir hårtynne sprekker mellom dem. */
+      Tegning.firkant(venstre + (i % n) * rute, topp + Math.floor(i / n) * rute, rute + 0.6, rute + 0.6, farge);
     }
   }
 
@@ -314,7 +339,9 @@ var Verden = (function () {
     var ctx = Tegning.ctx();
     ctx.save();
     ctx.globalAlpha = 0.75;
-    Tegning.tekst("< >", op.x, op.y + op.storrelse * 0.14, op.storrelse * 0.42, "#10121b", "center");
+    /* Tegneprogrammet får en palett, alt annet kodetegnet. */
+    var tegn = /tegn/i.test(op.tekst) ? "🎨" : "< >";
+    Tegning.tekst(tegn, op.x, op.y + op.storrelse * 0.14, op.storrelse * 0.42, "#10121b", "center");
     ctx.restore();
 
     Tegning.tekst(op.tekst, op.x, op.y + halv + 32, 26, "#ffffff", "center");

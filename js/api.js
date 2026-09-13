@@ -347,6 +347,51 @@ var Api = (function () {
     }
   });
 
+  /* ---- åpneTegneboka(); -------------------------------------------------
+     Åpner tegneprogrammet inne på maskinen. */
+  definer({
+    type: "aapneTegneboka",
+    erBlokk: false,
+    html: function () {
+      return funk("åpneTegneboka") + tegn("();");
+    },
+    kjor: function () {
+      Tegneboka.apne();
+    }
+  });
+
+  /* ---- tegnBilde("blomst", 300, 560, 96); -------------------------------
+     Setter en tegning fra Tegneboka inn der x og y sier - x er midten av
+     bildet, y er der det står. Tegningen leses på nytt hvert bilde, så
+     endrer han den i Tegneboka, endrer den seg her også. For det er de
+     samme tallene. */
+  definer({
+    type: "tegnBilde",
+    erBlokk: false,
+    html: function (linje, medValg) {
+      var a = linje.args;
+      return funk("tegnBilde") + tegn("(") +
+             verdiHtml(a.navn, "navn", medValg) + tegn(", ") +
+             verdiHtml(a.x, "x", medValg) + tegn(", ") +
+             verdiHtml(a.y, "y", medValg) + tegn(", ") +
+             verdiHtml(a.storrelse, "storrelse", medValg) + tegn(");");
+    },
+    kjor: function (miljo, linje) {
+      var a = linje.args;
+      var navn = Kjorer.verdi(miljo, a.navn);
+      if (!Fremdrift.hentTegning(navn)) {
+        Kjorer.feil("Det finnes ingen tegning som heter «" + navn + "».");
+      }
+      Verden.tegnI(miljo.lag, {
+        form: "bilde",
+        navn: navn,
+        x: Kjorer.verdi(miljo, a.x),
+        y: Kjorer.verdi(miljo, a.y),
+        storrelse: Kjorer.verdi(miljo, a.storrelse)
+      });
+    }
+  });
+
   /* ---- åpneProgram(); ---------------------------------------------------
      Åpner kodeverktøyet inne på maskinen. */
   definer({

@@ -20,7 +20,8 @@ var Fremdrift = (function () {
       utkast: {},         /* oppgaveId -> program han holder på med */
       installerte: [],    /* [{ id, program }] i den rekkefølgen de ble laget */
       tilstand: {},       /* småting verden må huske, f.eks. om maskinen står på */
-      lagret: {}          /* det HAN har lagret med lagre("navn", verdi) */
+      lagret: {},         /* det HAN har lagret med lagre("navn", verdi) */
+      tegninger: {}       /* navn -> 256 sifre fra Tegneboka */
     };
   }
 
@@ -36,7 +37,8 @@ var Fremdrift = (function () {
           utkast: lagret.utkast || {},
           installerte: lagret.installerte || [],
           tilstand: lagret.tilstand || {},
-          lagret: lagret.lagret || {}
+          lagret: lagret.lagret || {},
+          tegninger: lagret.tegninger || {}
         };
       }
     } catch (feil) {
@@ -111,6 +113,21 @@ var Fremdrift = (function () {
     return Object.prototype.hasOwnProperty.call(data.lagret, navn) ? data.lagret[navn] : undefined;
   }
 
+  /* ---------- Tegninger fra Tegneboka (kapittel 8) ---------- */
+
+  function lagreTegning(navn, ruter) {
+    data.tegninger[navn] = ruter;
+    lagre();
+  }
+
+  function hentTegning(navn) {
+    return data.tegninger[navn] || null;
+  }
+
+  function tegningsnavn() {
+    return Object.keys(data.tegninger);
+  }
+
   function settTilstand(nokkel, verdi) {
     data.tilstand[nokkel] = verdi;
     lagre();
@@ -138,6 +155,9 @@ var Fremdrift = (function () {
     installer: installer,
     hentInstallert: hentInstallert,
     alleInstallerte: alleInstallerte,
+    lagreTegning: lagreTegning,
+    hentTegning: hentTegning,
+    tegningsnavn: tegningsnavn,
     lagreVerdi: lagreVerdi,
     hentVerdi: hentVerdi,
     settTilstand: settTilstand,
