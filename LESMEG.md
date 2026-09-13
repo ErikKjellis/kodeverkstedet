@@ -139,6 +139,7 @@ js/
   verden.js                     rommet, møblene, elevens tegnelag
   skjerm.js                     verdenen inne i datamaskinen
   figur.js                      personen: mål, kroppsdeler og utseende
+  knapper.js                    menyknappene i rommet
   dialog.js                     Bit som snakker, og banneret nederst
   fremdrift.js                  lagring i nettleseren
   api.js                        ALLE kodebitene eleven kan bruke
@@ -150,6 +151,7 @@ js/
     kapittel01-musepeker.js     musepekeren
     kapittel02-skrivebordet.js  skrivebordet inne i maskinen
     kapittel03-figuren.js       personen som bor i rommet
+    kapittel04-menyen.js        knapper som endrer figuren
 ```
 
 ### To steder å være
@@ -231,9 +233,38 @@ En **oppgave** ser slik ut:
   hint: [ "Vises ett om gangen når han trykker på Hint." ],
   sjekk: function (program) {
     // returner { ok: false, melding: "..." }  eller  { ok: true, ros: "..." }
+  },
+  bekreftIVerden: {             // valgfritt: han må prøve før feiringen
+    instruks: "Trykk på knappen din! 👆",
+    sjekk: function () { return /* har han gjort det? */ true; },
+    pause: 900                  // millisekunder å se resultatet i
   }
 }
 ```
+
+`instruks` og `palett` kan også være **funksjoner**. Da regnes de ut når vinduet
+åpnes, og oppgaven kan ta hensyn til det han har laget tidligere (kapittel 4
+bruker det til å velge hvilken knapp han skal lage først).
+
+### La ham prøve før Bit forklarer
+
+Noen feil forstår man best ved å prøve dem. Da returnerer `sjekk` en
+`provForst` i tillegg til meldingen:
+
+```javascript
+return {
+  ok: false,
+  provForst: {
+    instruks: "Trykk på «Lav» i menyen! 👆",
+    forbered: Knapper.nullstillTrykk,
+    sjekk: function () { return Knapper.antallTrykk("Lav") > 0; }
+  },
+  melding: ["Du trykket – og ingenting skjedde. Men noe skjedde faktisk!"]
+};
+```
+
+Banneret ber ham prøve, Bit er stille, og først når han har trykket – og selv
+sett at ingenting skjer – kommer forklaringen.
 
 Trenger kapittelet en kodebit som ikke finnes ennå, legger du den til i
 `js/api.js`. Kopier en av de som står der, og bytt ut `html` (hvordan koden ser
@@ -250,6 +281,16 @@ farge: { k: "tekst", v: "blå", valg: ["blå", "grønn", "lilla"] }
 
 Det er slik han kan endre farger, plasseringer og navn uten å taste noe. Bruk
 det mye – det er den billigste måten å gi ham noe å leke med på.
+
+### Test med ekte trykk
+
+Test med ekte museklikk eller fingertrykk, ikke med `element.click()` fra
+konsollen. Programmerte klikk hopper over at knappen trykkes ned og slippes, og
+det var nettopp der den første store feilen satt: trykk-effekten flyttet knappen,
+og knappen gled bort fra musepekeren før man slapp.
+
+Av samme grunn: **trykk-effekter i CSS skal aldri flytte noe** (ingen
+`transform` på `:active`). Bruk farge eller skygge.
 
 ---
 

@@ -30,6 +30,7 @@ var Kjorer = (function () {
     hendelser = hendelser.filter(function (h) { return h.eier !== eier; });
     Verden.fjernLagFor(eier);
     Skjerm.fjernIkonerFor(eier);
+    Knapper.fjernFor(eier);
     Figur.nullstillFor(eier);
   }
 
@@ -155,6 +156,19 @@ var Kjorer = (function () {
     return 0;
   }
 
+  /*
+    Endrer en variabel som finnes fra før: den nærmeste først, ellers den
+    som ble laget øverst i programmet. Slik virker det i ekte JavaScript også.
+  */
+  function tilordne(miljo, navn, nyVerdi) {
+    if (Object.prototype.hasOwnProperty.call(miljo.variabler, navn)) {
+      miljo.variabler[navn] = nyVerdi;
+      return;
+    }
+    if (!globaler[miljo.eier]) globaler[miljo.eier] = {};
+    globaler[miljo.eier][navn] = nyVerdi;
+  }
+
   /* Lagrer en variabel. Er vi øverst i programmet, kan alle bruke den. */
   function settVariabel(miljo, navn, nyVerdi) {
     if (miljo.erToppniva) {
@@ -178,8 +192,12 @@ var Kjorer = (function () {
     "flytter" musepekeren seg i stedet for å etterlate seg et spor.
   */
   function utlos(type, verdier, kunEier, mal) {
-    for (var i = 0; i < hendelser.length; i++) {
-      var h = hendelser[i];
+    /* Vi går gjennom en kopi. Lager en hendelse nye hendelser mens den kjører
+       (f.eks. en hendelse som havnet inni en funksjon den selv kaller), skal de
+       ikke kjøres i samme runde - ellers kan det gå i ring og låse nettbrettet. */
+    var liste = hendelser.slice();
+    for (var i = 0; i < liste.length; i++) {
+      var h = liste[i];
       if (h.type !== type) continue;
       if (kunEier && h.eier !== kunEier) continue;
       if (type === "trykk" && mal && h.mal !== mal) continue;
@@ -231,6 +249,7 @@ var Kjorer = (function () {
     harHendelse: harHendelse,
     verdi: verdi,
     settVariabel: settVariabel,
+    tilordne: tilordne,
     flatenTil: flatenTil,
     hentFeil: hentFeil,
     tomFeil: tomFeil,

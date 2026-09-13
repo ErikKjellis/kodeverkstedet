@@ -63,6 +63,7 @@ eneste tegn.
 | 1 · Musepekeren | en musepeker som følger fingeren | sekvens, funksjon, parameter, koordinater, **hendelse** |
 | 2 · Skrivebordet | bakgrunn og programikon inne i maskinen | **variabel**, hendelse på én bestemt ting, rekkefølge |
 | 3 · Figuren | en person, fra strekmann til ferdig utseende | **argument** – å gi en funksjon noe å jobbe med |
+| 4 · Menyen | knapper i rommet som endrer figuren | å **endre** en variabel, og å **viske ut og tegne på nytt** |
 
 Begrepene kommer alltid *etter* at han har sett dem virke. Han lager en hendelse
 først, og får vite at den heter «hendelse» etterpå.

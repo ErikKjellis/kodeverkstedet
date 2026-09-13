@@ -16,6 +16,7 @@ var KodeEditor = (function () {
 
   var program = [];
   var oppgave = null;
+  var palett = [];
   var valgtId = null;
   var hintNr = 0;
   var nesteId = 1;
@@ -51,7 +52,10 @@ var KodeEditor = (function () {
     velgVedStart();
 
     tittelEl.textContent = oppgave.tittel;
-    instruksEl.innerHTML = oppgave.instruks;
+    /* Palett og instruks kan være funksjoner, slik at en oppgave kan ta
+       hensyn til det han har laget tidligere. De regnes ut én gang her. */
+    palett = verdiEllerFunksjon(oppgave.palett) || [];
+    instruksEl.innerHTML = verdiEllerFunksjon(oppgave.instruks) || "";
     hintKnapp.classList.toggle("skjult", !oppgave.hint || oppgave.hint.length === 0);
 
     /* Programmerer han inne i maskinen, skal skjermen være oppe bak vinduet. */
@@ -73,7 +77,9 @@ var KodeEditor = (function () {
     if (oppgave.valgtVedStart === "forste") {
       valgtId = program[0].id;
     } else if (oppgave.valgtVedStart === "siste") {
-      valgtId = program[program.length - 1].id;
+      /* Er siste linje en blokk, skal nye ting havne under den, ikke inni. */
+      var siste = program[program.length - 1];
+      valgtId = Api.hent(siste.type).erBlokk ? siste.id + SLUTT : siste.id;
     } else {
       valgtId = null;
     }
@@ -102,9 +108,17 @@ var KodeEditor = (function () {
         continue;
       }
 
+      /* Slutten av en blokk kan også velges: da havner neste kodebit rett
+         UNDER blokka, ikke inni den. */
       if (r.rolle === "slutt") {
-        html += '<div class="kodelinje" style="--dybde:' + r.dybde + '"><span class="kode">' +
+        var sluttId = r.linje.id + SLUTT;
+        var sluttValgt = (valgtId === sluttId);
+        html += '<div class="kodelinje kanvelges' + (sluttValgt ? " valgt" : "") +
+                '" data-velg="' + sluttId + '" style="--dybde:' + r.dybde + '"><span class="kode">' +
                 r.html + "</span></div>";
+        if (sluttValgt) {
+          html += '<div class="settes-inn-her" style="--dybde:' + r.dybde + '"></div>';
+        }
         continue;
       }
 
@@ -165,7 +179,7 @@ var KodeEditor = (function () {
 
   function tegnPalett() {
     var html = "";
-    var biter = oppgave.palett || [];
+    var biter = palett;
     for (var i = 0; i < biter.length; i++) {
       var mal = biter[i];
       var def = Api.hent(mal.type);
@@ -183,7 +197,7 @@ var KodeEditor = (function () {
   function paPalettTrykk(e) {
     var knapp = e.target.closest(".palettknapp");
     if (!knapp) return;
-    var mal = oppgave.palett[parseInt(knapp.getAttribute("data-nr"), 10)];
+    var mal = palett[parseInt(knapp.getAttribute("data-nr"), 10)];
     settInn(fraMal(mal));
   }
 
@@ -258,10 +272,13 @@ var KodeEditor = (function () {
   }
 
   function settInn(nyLinje) {
-    var sted = valgtId ? finnSted(program, valgtId) : null;
+    var underBlokk = erSlutt(valgtId);
+    var sted = valgtId ? finnSted(program, underBlokk ? utenSlutt(valgtId) : valgtId) : null;
 
     if (!sted) {
       program.push(nyLinje);
+    } else if (underBlokk) {
+      sted.liste.splice(sted.indeks + 1, 0, nyLinje);
     } else if (Api.hent(sted.linje.type).erBlokk) {
       sted.linje.barn = sted.linje.barn || [];
       sted.linje.barn.unshift(nyLinje);
@@ -316,9 +333,11 @@ var KodeEditor = (function () {
     var resultat = oppgave.sjekk(program, Kjorer.hentFeil());
 
     if (!resultat.ok) {
-      Dialog.si(somListe(resultat.melding), function () {
-        vis();
-      }, { knapp: "Prøv igjen ↺" });
+      if (resultat.provForst) {
+        provForst(resultat);
+      } else {
+        visFeil(resultat);
+      }
       return;
     }
 
@@ -330,6 +349,37 @@ var KodeEditor = (function () {
     }
 
     fullfor(resultat);
+  }
+
+  function visFeil(resultat) {
+    Dialog.si(somListe(resultat.melding), function () {
+      vis();
+    }, { knapp: "Prøv igjen ↺" });
+  }
+
+  /*
+    Noen feil forstår man best ved å prøve dem. Da får han trykke selv først -
+    og SE at ingenting skjer, eller at det dukker opp to figurer - før Bit
+    forklarer hvorfor. Sjekken returnerer da:
+      { ok: false, provForst: { instruks, sjekk, forbered? }, melding: [...] }
+  */
+  function provForst(resultat) {
+    var prov = resultat.provForst;
+    venterPaVerden = true;
+    if (prov.forbered) prov.forbered();
+    Banner.vis(prov.instruks, { viktig: true });
+
+    (function sjekkNa() {
+      if (!venterPaVerden) return;
+      if (prov.sjekk()) {
+        venterPaVerden = false;
+        Banner.skjul();
+        /* Pause, så han rekker å se hva som (ikke) skjedde. */
+        setTimeout(function () { visFeil(resultat); }, 1200);
+        return;
+      }
+      requestAnimationFrame(sjekkNa);
+    })();
   }
 
   /* Noen oppgaver er ikke ferdige før spilleren har prøvd noe i rommet. */
@@ -347,7 +397,8 @@ var KodeEditor = (function () {
       if (oppgave.bekreftIVerden.sjekk()) {
         venterPaVerden = false;
         Banner.skjul();
-        fullfor(resultat);
+        /* Liten pause, så han rekker å se det skje før feiringen dekker det. */
+        setTimeout(function () { fullfor(resultat); }, oppgave.bekreftIVerden.pause || 0);
         return;
       }
       requestAnimationFrame(sjekkNa);
@@ -364,6 +415,15 @@ var KodeEditor = (function () {
   }
 
   /* ---------- Småting ---------- */
+
+  /* Valgt slutt på en blokk skrives som "<id>:slutt". */
+  var SLUTT = ":slutt";
+  function erSlutt(id) { return !!id && id.slice(-SLUTT.length) === SLUTT; }
+  function utenSlutt(id) { return id.slice(0, -SLUTT.length); }
+
+  function verdiEllerFunksjon(v) {
+    return (typeof v === "function") ? v() : v;
+  }
 
   function somListe(verdi) {
     if (!verdi) return ["Bra jobbet!"];

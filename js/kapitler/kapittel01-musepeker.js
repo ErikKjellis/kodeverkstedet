@@ -291,6 +291,7 @@
 
             stopp();
             Banner.skjul();
+            Verden.stoppBlink("datamaskin");
 
             gjenstand.pa = true;
             Fremdrift.settTilstand("datamaskinPa", true);

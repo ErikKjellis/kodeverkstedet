@@ -392,7 +392,10 @@ button {
   font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
   font-size: 0.92rem;
   text-align: left;
-  white-space: nowrap;
+  /* Lange kodebiter brekker om i stedet for å gi paletten et sidelengs
+     rullefelt på smale skjermer. */
+  white-space: normal;
+  max-width: 100%;
 }
 
 .palettknapp:active {

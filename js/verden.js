@@ -41,6 +41,10 @@ var Verden = (function () {
     blinkende[id] = rammer || 90;
   }
 
+  function stoppBlink(id) {
+    blinkende[id] = 0;
+  }
+
   /* ---------- Lag (elevens tegninger) ---------- */
 
   /*
@@ -74,6 +78,14 @@ var Verden = (function () {
 
   function tomAlleLag() {
     lag = [];
+  }
+
+  /* viskUt(): tømmer alt ett program har tegnet på én flate. Lagene blir
+     stående, for hendelsene tegner i dem igjen neste gang. */
+  function tomLagFor(eier, flate) {
+    for (var i = 0; i < lag.length; i++) {
+      if (lag[i].eier === eier && lag[i].flate === flate) lag[i].operasjoner = [];
+    }
   }
 
   function tegnI(navn, operasjon) {
@@ -164,23 +176,34 @@ var Verden = (function () {
 
   /* ---------- Tegn hele verdenen ---------- */
 
+  /* Programmer som alltid skal tegnes aller øverst, uansett når de ble laget. */
+  var OVERST = ["musepeker"];
+
+  function erOverst(l) {
+    return OVERST.indexOf(l.eier) >= 0;
+  }
+
   /*
-    Rekkefølgen betyr alt:
+    Rekkefølgen betyr alt - det som tegnes sist, havner øverst:
       1. rommet og møblene
-      2. det som finnes inne i datamaskinen
-      3. elevens tegninger i rommet - musepekeren ligger her, og den
-         skal alltid ligge aller øverst
+      2. elevens tegninger i rommet, som figuren
+      3. menyknappene
+      4. datamaskinens skjerm - når vi zoomer inn, dekker den alt over
+      5. musepekeren, som alltid skal synes
   */
   function tegn() {
     tegnRom();
     tegnGjenstander();
 
+    tegnLag("rom", false);
+    Knapper.tegn();
+
     var maskin = finn("datamaskin");
     if (maskin && maskin.pa) {
-      Skjerm.tegn(function () { tegnLag("skjerm"); }, harInnholdPa("skjerm"));
+      Skjerm.tegn(function () { tegnLag("skjerm", false); }, harInnholdPa("skjerm"));
     }
 
-    tegnLag("rom");
+    tegnLag("rom", true);
   }
 
   function tegnGjenstander() {
@@ -202,9 +225,11 @@ var Verden = (function () {
     }
   }
 
-  function tegnLag(flate) {
+  /* overst = true tegner bare de øverste lagene, false alle de andre. */
+  function tegnLag(flate, overst) {
     for (var i = 0; i < lag.length; i++) {
       if (lag[i].flate !== flate) continue;
+      if (erOverst(lag[i]) !== overst) continue;
       var ops = lag[i].operasjoner;
       for (var j = 0; j < ops.length; j++) {
         tegnOperasjon(ops[j]);
@@ -263,10 +288,12 @@ var Verden = (function () {
     finn: finn,
     trykketPa: trykketPa,
     blink: blink,
+    stoppBlink: stoppBlink,
     sikreLag: sikreLag,
     tomLag: tomLag,
     fjernLagFor: fjernLagFor,
     tomAlleLag: tomAlleLag,
+    tomLagFor: tomLagFor,
     tegnI: tegnI,
     lagStandardrom: lagStandardrom,
     tegn: tegn,

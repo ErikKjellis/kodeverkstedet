@@ -127,6 +127,55 @@ var Api = (function () {
     }
   });
 
+  /* ---- hoyde = "høy"; ---------------------------------------------------
+     Å ENDRE en variabel som allerede finnes. Uten var foran - esken er
+     laget fra før, vi putter bare noe nytt i den.
+
+     Legg merke til hva som IKKE skjer: skjermen forandrer seg ikke. Det
+     som allerede er tegnet, blir stående til noen tegner på nytt. */
+  definer({
+    type: "tilordning",
+    erBlokk: false,
+    html: function (linje, medValg) {
+      return vari(linje.args.navn) + tegn(" = ") +
+             verdiHtml(linje.args.verdi, "verdi", medValg) + tegn(";");
+    },
+    kjor: function (miljo, linje) {
+      Kjorer.tilordne(miljo, linje.args.navn, Kjorer.verdi(miljo, linje.args.verdi));
+    }
+  });
+
+  /* ---- viskUt(); --------------------------------------------------------
+     Visker ut alt dette programmet har tegnet. En datamaskin tegner bare
+     OPPÅ det som er der fra før, som maling - vil du tegne noe på nytt,
+     må det gamle bort først. Knapper er ikke maling, de blir stående. */
+  definer({
+    type: "viskUt",
+    erBlokk: false,
+    html: function () {
+      return funk("viskUt") + tegn("();");
+    },
+    kjor: function (miljo) {
+      Verden.tomLagFor(miljo.eier, Kjorer.flatenTil(miljo.eier));
+    }
+  });
+
+  /* ---- lagKnapp("Høy"); -------------------------------------------------
+     En knapp i menyen. Knappene ordner seg selv i en kolonne, i den
+     rekkefølgen koden lager dem. Trykker man på den, utløses
+     nårManTrykkerPå med samme navn. */
+  definer({
+    type: "lagKnapp",
+    erBlokk: false,
+    html: function (linje, medValg) {
+      return funk("lagKnapp") + tegn("(") +
+             verdiHtml(linje.args.navn, "navn", medValg) + tegn(");");
+    },
+    kjor: function (miljo, linje) {
+      Knapper.leggTil(miljo.eier, Kjorer.verdi(miljo, linje.args.navn));
+    }
+  });
+
   /* ---- fyllFarge("hvit"); ----------------------------------------------
      Setter fargen som brukes på alt som tegnes ETTER denne linja. */
   definer({

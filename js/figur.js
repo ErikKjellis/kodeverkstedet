@@ -25,7 +25,9 @@ var Figur = (function () {
   var SKULDER = 23;
   var ARM = 44;
 
-  var HOYDER = { "lav": 0.74, "vanlig": 0.9, "høy": 1.06 };
+  /* Spennet er med vilje stort: når to figurer står oppå hverandre i
+     kapittel 4, skal det synes tydelig at det er to. */
+  var HOYDER = { "lav": 0.68, "vanlig": 0.9, "høy": 1.18 };
   var BREDDER = { "tynn": 0.62, "vanlig": 1, "tykk": 1.55 };
 
   var HUD = "#e8b58c";

@@ -159,6 +159,9 @@ var Kapittelmotor = (function () {
     (function vent() {
       if (Skjerm.programErApent()) {
         Banner.skjul();
+        /* Han er fremme - maskinen skal ikke fortsette å rope på ham
+           mens han prøver det han har laget ute i rommet. */
+        Verden.stoppBlink("datamaskin");
         naarKlar();
         return;
       }
@@ -180,11 +183,13 @@ var Kapittelmotor = (function () {
     }
   }
 
+  /* Vises når han har spilt gjennom alle kapitlene som finnes. Skal ikke
+     love noe bestemt om neste kapittel - da blir teksten gammel med en gang. */
   function alleKapitlerFerdige() {
     Dialog.si([
       "Der var alt jeg har å vise deg for nå.",
       "Men spillet ditt er ikke ferdig – det er så vidt begynt!",
-      "Neste gang lager vi en person som kan bo i rommet. 👋"
+      "Alt du har laget blir liggende her til neste gang. 👋"
     ], function () {
       Banner.vis("Flere kapitler kommer snart!", {});
     });

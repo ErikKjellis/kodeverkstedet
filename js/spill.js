@@ -71,6 +71,14 @@
       return;
     }
 
+    /* Menyknappene ligger oppå rommet, så de får trykket først. */
+    var knapp = Knapper.knappPa(x, y);
+    if (knapp) {
+      Knapper.trykket(knapp.navn);
+      Kjorer.utlos("trykk", [], null, knapp.navn);
+      return;
+    }
+
     var gjenstand = Verden.trykketPa(x, y);
     if (!gjenstand) return;
 
