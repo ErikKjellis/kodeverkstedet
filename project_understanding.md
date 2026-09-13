@@ -4,7 +4,7 @@ Dette dokumentet er min forståelse av hva vi holder på med, hvilke valg du har
 tatt, hva som er bygget, og hva som står for tur. **Planen er styrt av dine valg.**
 Der jeg foreslår noe på egen hånd, står det uttrykkelig.
 
-Sist oppdatert: 13. september 2026 (etter kapittel 4).
+Sist oppdatert: 13. september 2026 (etter kapittel 5).
 
 ---
 
@@ -57,6 +57,7 @@ Disse ligger fast med mindre du sier noe annet.
 | **All programmering går via datamaskinen** | Trykk på maskinen, trykk på ikonet, kod. |
 | **Figuren kan ikke bevege seg før vi lærer det** | Bevegelse er en egen leksjon, ikke noe han får gratis. |
 | **Rekkefølgen: meny, så bevegelse** | Menyen først, deretter bevegelse. Tegneprogrammet kommer etter det. |
+| **Styring med knapper først** | Figuren styres med knapper i menyen. Å dra med fingeren kan komme senere. |
 | **Tegneprogrammet** | Et program på skrivebordet der han tegner enkle tegninger, som senere blir grafikk og animasjon i spillet. |
 | **16 × 16 i tegneprogrammet** | Til å begynne med. Vi ser om det er avansert nok når han har prøvd. |
 
@@ -162,54 +163,73 @@ nytt** – som er selve grunnlaget for bevegelse i neste kapittel.
 **Lærdom:** jeg testet med programmerte klikk, og de hopper over nettopp det som
 gikk galt. Nå tester jeg med ekte museklikk der det betyr noe.
 
+### Kapittel 5 – Bevegelse
+Figuren får endelig gå, og han styrer den med knapper i menyen. Tre oppgaver,
+én ny idé i hver:
+
+**Ett steg.** En «Venstre»-knapp flytter figuren 20 punkter per trykk.
+`figurX = figurX - 20` ser rart ut første gang – Bit forklarer at det betyr
+«ta tallet i esken, trekk fra 20, legg svaret tilbake». Glemmer han `viskUt()`,
+får han en hel rekke med figurer.
+
+**Hvert bilde.** Å trykke hundre ganger er slitsomt, så datamaskinen gjør det for
+ham – seksti ganger i sekundet:
+
+```javascript
+hvertBilde(function () {
+  figurX = figurX - 2;
+  viskUt();
+  tegnFigur(figurX, 560);
+});
+```
+
+Figuren går av seg selv, foran bordet og rett ut av rommet. Glemmer han
+`viskUt()` her, blir figuren til en lang orm – seksti nye figurer i sekundet.
+
+**Styr den.** Knappene flytter ikke lenger figuren; de setter bare `fart`, og
+spilløkka gjør resten: `figurX = figurX + fart`. Høyre er 3, Stopp er 0,
+Venstre er −3.
+
+**Lærer:** **spilløkka**, å regne med variabler, og at én variabel (farten) kan
+styre en annen (plassen) hvert eneste bilde.
+
+**Mine valg underveis:**
+* **Bit bytter ut tallet 810 med `figurX` overalt i koden hans** før første
+  oppgave, og sier det rett ut. Ellers ville de gamle menyknappene fra kapittel 4
+  kastet figuren tilbake til 810 hver gang han trykket – en ekte feil, men ikke
+  dette kapittelets leksjon.
+* **«Venstre» først.** Figuren står helt til høyre, så det er der det er plass å gå.
+* **Spillet visker ikke lenger ut i det skjulte.** Før visket motoren stille ut
+  det en hendelse tegnet sist, før den tegnet på nytt. Da ville spilløkka sett
+  riktig ut *uten* `viskUt()`, og leksjonen fra kapittel 4 ville vært juks. Nå
+  gjelder malingsregelen for alt – bortsett fra musepekeren, som er en ting som
+  følger fingeren og kom lenge før han lærte `viskUt()`.
+* **Venstre-knappen får beholde hoppet** fra første oppgave når den får fart.
+  Den hopper 20 og begynner å gå. Det er ikke pent, men det er hans kode, og det
+  virker.
+
 ### Motoren slik den står nå
 To flater, `"rom"` og `"skjerm"`, begge med koordinatsystem 1000 × 700. Elevens
 program lagres som data og tolkes – ikke `eval`. Alt et program lager merkes med
 programmets navn, så ett program kan byttes ut uten at noe annet røres. Fremdrift
 og alle programmene hans lagres i nettleseren og kjøres på nytt ved oppstart.
 
-Nytt i kapittel 4: menyknapper er *ting* som blir stående, mens tegninger er
-*maling* som `viskUt()` fjerner. Musepekeren tegnes alltid øverst. En oppgave kan
-be ham prøve først (`provForst`), og regne ut palett og instruks ut fra det han
-har laget tidligere. I editoren kan man trykke på en `});` for å sette inn *under*
-en blokk i stedet for inni.
+Menyknapper er *ting* som blir stående, mens tegninger er *maling* som `viskUt()`
+fjerner. Musepekeren tegnes alltid øverst. En oppgave kan be ham prøve først
+(`provForst`), gi ham tid til å se på før Bit sier noe (`seTid`), og regne ut
+palett og instruks ut fra det han har laget tidligere. I editoren kan man trykke
+på en `});` for å sette inn *under* en blokk i stedet for inni.
+
+Fra kapittel 5: `hvertBilde` kjøres nøyaktig seksti ganger i sekundet, også på
+nettbrett som tegner 90 eller 120 ganger i sekundet. Verdier kan være små
+regnestykker (`figurX + fart`). Menyen brekker om til flere kolonner når den blir
+lang. Felles hjelpere til oppgavesjekkene ligger i `Kode` i `js/kapitler.js`.
 
 ---
 
 ## 7. Hva vi skal gjøre
 
-### Kapittel 5 – Bevegelse  ← neste
-
-Nå får figuren endelig gå.
-
-```javascript
-hvertBilde(function () {
-  figurX = figurX + 2;
-  viskUt();
-  tegnFigur(figurX, 560);
-});
-```
-
-**Lærer:** **spilløkka** – at et spill tegner alt på nytt seksti ganger i
-sekundet, og at bevegelse bare er en variabel som endrer seg litt for hvert bilde.
-
-**Bygger direkte på kapittel 4.** Menyknappen gjorde tre ting én gang: endret en
-variabel, visket ut, tegnet på nytt. Spilløkka gjør *nøyaktig det samme* – bare
-seksti ganger i sekundet. Det er hele hemmeligheten, og han har allerede gjort
-den med egne hender. Bit har lovet ham det i slutten av kapittel 4.
-
-**Motoren må lære seg:** en hendelse som kjøres for hvert bilde, og at `x` i
-`tegnFigur` kan være en variabel som endrer seg. Figuren står i dag fast på
-(810, 560).
-
-**Åpne spørsmål, avgjøres når vi kommer dit:**
-* Hvordan styrer han? Knapper i menyen («gå til venstre»/«gå til høyre») bygger
-  videre på det han kan. Å dra med fingeren er mer naturlig på nettbrett, men et
-  nytt begrep.
-* Hva skjer ved kanten av rommet? Første `if` kan komme helt naturlig her: *hvis*
-  figuren er ved veggen, stopp.
-
-### Kapittel 6 – Tegneprogrammet
+### Kapittel 6 – Tegneprogrammet  ← neste
 
 **Din idé:** et program på skrivebordet der man kan tegne enkle tegninger, som vi
 siden bruker som grafikk i spillet.
@@ -233,6 +253,10 @@ tall**. Hver rute er et tall, hvert tall er en farge. Koden leser den samme list
 **Lærer:** koblingen mellom det visuelle og koden. At grafikk er data. At en
 tegning og et program er laget av det samme stoffet.
 
+**Motoren må lære seg:** en egen skjerm for tegneverktøyet inne i maskinen (ikke
+kodeeditoren), lagring av tegninger under et navn, og en måte å vise lista med
+tall på som en tiåring faktisk kan lese.
+
 ### Kapittel 7 – Animasjon
 
 Her møtes kapittel 5 og 6. Han tegner to bilder av figuren i Tegneboka – ett med
@@ -248,6 +272,7 @@ Rekkefølgen er ikke spikret, og begrepene bestemmer den mer enn møblene gjør.
 
 | Det han bygger | Begrepet det bærer |
 |---|---|
+| En vegg figuren ikke kan gå gjennom | `if` – *hvis* figuren er ved kanten, stopp. Bit har allerede lovet det. |
 | Lys som kan slås av og på | `if`/`else`, sant og usant |
 | En stol å sitte på | kollisjon, tilstand |
 | Et vindu å se ut av | lag og dybde |
@@ -257,12 +282,18 @@ Rekkefølgen er ikke spikret, og begrepene bestemmer den mer enn møblene gjør.
 | En fiende | flere figurer, kollisjon som betyr noe |
 | Poeng og mål | tilstand, vinne og tape – **et spill** |
 
+**Merk:** kapittel 5 slutter med at figuren går rett gjennom veggen, og Bit sier
+«det skal den få lære». Veggen er dermed lovet. Den kan komme før eller etter
+animasjonen – men den bør ikke vente for lenge.
+
 ---
 
 ## 8. Ting jeg vil at du skal bestemme
 
-1. **Styring i kapittel 5** – knapper i menyen, eller dra med fingeren? Jeg heller
-   mot knapper først, fordi han nettopp har lært dem.
+1. **Veggen – før eller etter tegneprogrammet?** Planen følger din rekkefølge:
+   tegneprogram, så animasjon. Men veggen er en liten oppgave som bygger rett på
+   kapittel 5, og den er lovet. Den kan skytes inn nå, eller komme etter
+   animasjonen.
 2. **Skal Bit ha en annen stemme etter hvert?** Han er ganske ivrig nå. Det
    passer for en tiåring som er fersk, men kan bli mye om et år.
 3. **Hvordan gikk det da han prøvde?** Han har ikke prøvd ennå. Alt over er mine
@@ -271,12 +302,17 @@ Rekkefølgen er ikke spikret, og begrepene bestemmer den mer enn møblene gjør.
 
 ## 9. Det jeg er usikker på
 
-* **Tempoet.** Kapittel 3 har tre oppgaver, kapittel 4 har to der den første
-  inneholder tre oppdagelser. Det kan være mye i strekk.
+* **Tempoet.** Kapittel 3 og 5 har tre oppgaver hver, kapittel 4 har to der den
+  første inneholder tre oppdagelser. Det kan være mye i strekk.
 * **Om paletten blir for full.** Den vokser for hvert kapittel. På et tidspunkt
   må kodebitene sorteres i grupper, eller så drukner han i valg.
-* **Om koden blir for lang å bla i.** Etter kapittel 4 er figurprogrammet hans
-  godt over tjue linjer. På et nettbrett betyr det mye rulling.
+* **Om koden blir for lang å bla i.** Etter kapittel 5 er figurprogrammet hans
+  rundt førti linjer. På et nettbrett betyr det mye rulling, og det blir stadig
+  vanskeligere å finne riktig sted å sette inn. Lukkbare blokker, som kan
+  foldes sammen, er trolig det neste editoren trenger.
+* **Om menyen blir for rotete.** Knappene står i den rekkefølgen koden lager dem,
+  så «Stopp» kan havne i en egen kolonne langt fra «Høyre». Grupper av knapper er
+  en mulig senere forbedring.
 * **Om han kommer til å ville lese koden i det hele tatt**, eller bare trykke til
   det virker. Begge deler er greit i starten – men leksjonene om rekkefølge er
   bygget på at han faktisk ser hva som står.

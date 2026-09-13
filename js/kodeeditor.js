@@ -326,7 +326,8 @@ var KodeEditor = (function () {
     Kjorer.installer(oppgave.installasjonsId, program, oppgave.flate);
 
     /* Liten pause, så han rekker å se hva som skjedde før Bit sier noe. */
-    setTimeout(vurder, 750);
+    /* Noen oppgaver trenger lenger tid å se på - en figur som går, for eksempel. */
+    setTimeout(vurder, oppgave.seTid || 750);
   }
 
   function vurder() {

@@ -64,6 +64,7 @@ eneste tegn.
 | 2 · Skrivebordet | bakgrunn og programikon inne i maskinen | **variabel**, hendelse på én bestemt ting, rekkefølge |
 | 3 · Figuren | en person, fra strekmann til ferdig utseende | **argument** – å gi en funksjon noe å jobbe med |
 | 4 · Menyen | knapper i rommet som endrer figuren | å **endre** en variabel, og å **viske ut og tegne på nytt** |
+| 5 · Bevegelse | en figur som går, og knapper som styrer den | **spilløkka** – seksti ganger i sekundet, og å regne med variabler |
 
 Begrepene kommer alltid *etter* at han har sett dem virke. Han lager en hendelse
 først, og får vite at den heter «hendelse» etterpå.

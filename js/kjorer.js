@@ -142,6 +142,18 @@ var Kjorer = (function () {
   function verdi(miljo, v) {
     if (!v) return 0;
     if (v.k === "tall" || v.k === "tekst") return v.v;
+
+    /* Et regnestykke: figurX + 20, figurX - 2, figurX + fart */
+    if (v.k === "regn") {
+      var a = Number(verdi(miljo, v.a));
+      var b = Number(verdi(miljo, v.b));
+      if (isNaN(a) || isNaN(b)) {
+        feil("Man kan bare regne med tall.");
+        return 0;
+      }
+      return v.op === "-" ? a - b : a + b;
+    }
+
     if (v.k === "var") {
       if (Object.prototype.hasOwnProperty.call(miljo.variabler, v.v)) {
         return miljo.variabler[v.v];
@@ -202,7 +214,14 @@ var Kjorer = (function () {
       if (kunEier && h.eier !== kunEier) continue;
       if (type === "trykk" && mal && h.mal !== mal) continue;
 
-      Verden.tomLag(h.lag);
+      /*
+        Bare musepekeren får det gamle bildet sitt visket ut av seg selv - den
+        er en TING som følger fingeren, og den kom lenge før han lærte viskUt().
+        For alle andre hendelser gjelder maling-regelen fra kapittel 4: det som
+        er tegnet, blir stående til noen visker det ut. Glemmer han viskUt() i
+        spilløkka, skal han få se figuren bli til en lang orm.
+      */
+      if (h.type === "fingerFlytter") Verden.tomLag(h.lag);
 
       var variabler = {};
       for (var j = 0; j < h.parametre.length; j++) {

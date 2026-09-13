@@ -152,6 +152,7 @@ js/
     kapittel02-skrivebordet.js  skrivebordet inne i maskinen
     kapittel03-figuren.js       personen som bor i rommet
     kapittel04-menyen.js        knapper som endrer figuren
+    kapittel05-bevegelse.js     figuren går, og knappene styrer den
 ```
 
 ### To steder å være
@@ -242,6 +243,9 @@ En **oppgave** ser slik ut:
 }
 ```
 
+`seTid` (millisekunder) gir ham tid til å se på før Bit sier noe – nyttig når
+det som skjer tar litt tid, som en figur som går. Standard er 750.
+
 `instruks` og `palett` kan også være **funksjoner**. Da regnes de ut når vinduet
 åpnes, og oppgaven kan ta hensyn til det han har laget tidligere (kapittel 4
 bruker det til å velge hvilken knapp han skal lage først).
@@ -281,6 +285,31 @@ farge: { k: "tekst", v: "blå", valg: ["blå", "grønn", "lilla"] }
 
 Det er slik han kan endre farger, plasseringer og navn uten å taste noe. Bruk
 det mye – det er den billigste måten å gi ham noe å leke med på.
+
+### Regnestykker
+
+En verdi kan være et lite regnestykke. Begge sider kan ha sine egne gule verdier:
+
+```javascript
+verdi: { k: "regn", a: { k: "var", v: "figurX" }, op: "-", b: { k: "tall", v: 20, valg: [10, 20, 50] } }
+```
+
+### Spilløkka og maling
+
+`hvertBilde(function () { ... })` kjøres nøyaktig seksti ganger i sekundet, uansett
+hvor fort skjermen til nettbrettet tegner.
+
+Det som tegnes, blir stående til noen visker det ut – også inni hendelser og
+spilløkka. **Eneste unntak er musepekeren** (`nårFingerenFlytterSeg`), som visker
+ut sitt eget forrige bilde av seg selv. Det er med vilje: glemmer han `viskUt()`
+i spilløkka, skal han få se figuren bli til en orm.
+
+### Hjelpere til oppgavesjekker
+
+`Kode` i `js/kapitler.js` har ferdige hjelpere som går igjen fra kapittel til
+kapittel: `alleLinjer`, `finnVariabel`, `knappenavn`, `hendelse`,
+`hendelseHvorSomHelst`, `utvid` (legger innholdet i egne hjelpefunksjoner inn i
+steget som kaller dem) og `indeksI`. Se `kapittel05-bevegelse.js` for bruk.
 
 ### Test med ekte trykk
 

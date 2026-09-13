@@ -90,7 +90,34 @@
     Kjorer.utlos("trykk", [], null, gjenstand.navn || gjenstand.id);
   }
 
-  function ramme() {
+  /*
+    hvertBilde() i elevens kode kjøres nøyaktig seksti ganger i sekundet -
+    ikke «så ofte skjermen tegner». Mange nettbrett tegner 90 eller 120
+    ganger i sekundet, og da ville figuren gått dobbelt så fort der.
+    Vi sparer opp tid og kjører hendelsen én gang for hver sekstidel.
+  */
+  var BILDE_MS = 1000 / 60;
+  var forrigeTid = null;
+  var oppspart = 0;
+
+  function kjorHvertBilde(tid) {
+    if (forrigeTid === null) forrigeTid = tid;
+    /* Har nettbrettet ligget i dvale, skal ikke figuren ta igjen alt på én gang. */
+    oppspart += Math.min(tid - forrigeTid, 250);
+    forrigeTid = tid;
+
+    var runder = 0;
+    /* Litt slingringsmonn, så en 60 Hz-skjerm ikke hakker mellom 0 og 2 runder. */
+    while (oppspart >= BILDE_MS - 1 && runder < 4) {
+      Kjorer.utlos("bilde", []);
+      oppspart -= BILDE_MS;
+      runder++;
+    }
+    if (oppspart < 0 || runder === 4) oppspart = 0;
+  }
+
+  function ramme(tid) {
+    kjorHvertBilde(tid || performance.now());
     Skjerm.oppdater();
     Tegning.nyRamme();
     Verden.tegn();

@@ -39,8 +39,19 @@ var Knapper = (function () {
     knapper = knapper.filter(function (k) { return k.eier !== eier; });
   }
 
+  /* Fem knapper i hver kolonne, så menyen ikke vokser helt ned til gulvet. */
+  var PER_KOLONNE = 5;
+  var KOLONNEBREDDE = BREDDE + 20;
+
   function omrade(nr) {
-    return { x: X, y: TOPP + TITTELPLASS + nr * AVSTAND, bredde: BREDDE, hoyde: HOYDE };
+    var kolonne = Math.floor(nr / PER_KOLONNE);
+    var rad = nr % PER_KOLONNE;
+    return {
+      x: X + kolonne * KOLONNEBREDDE,
+      y: TOPP + TITTELPLASS + rad * AVSTAND,
+      bredde: BREDDE,
+      hoyde: HOYDE
+    };
   }
 
   function knappPa(x, y) {
@@ -61,8 +72,11 @@ var Knapper = (function () {
   function tegn() {
     if (knapper.length === 0) return;
 
-    var panelHoyde = TITTELPLASS + knapper.length * AVSTAND + 4;
-    Tegning.avrundetFirkant(X - 12, TOPP - 8, BREDDE + 24, panelHoyde, 16, "rgba(16, 18, 27, 0.72)");
+    var kolonner = Math.ceil(knapper.length / PER_KOLONNE);
+    var rader = Math.min(knapper.length, PER_KOLONNE);
+    var panelBredde = (kolonner - 1) * KOLONNEBREDDE + BREDDE + 24;
+    var panelHoyde = TITTELPLASS + rader * AVSTAND + 4;
+    Tegning.avrundetFirkant(X - 12, TOPP - 8, panelBredde, panelHoyde, 16, "rgba(16, 18, 27, 0.72)");
     Tegning.tekst("MENY", X + 4, TOPP + 20, 18, "#a2abc4");
 
     for (var i = 0; i < knapper.length; i++) {

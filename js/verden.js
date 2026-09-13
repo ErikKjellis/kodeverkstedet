@@ -88,9 +88,15 @@ var Verden = (function () {
     }
   }
 
+  /* En spilløkke uten viskUt() tegner en ny figur seksti ganger i sekundet.
+     Det skal han få se - men ikke så lenge at nettbrettet går tregt. */
+  var MAKS_PER_LAG = 1200;
+
   function tegnI(navn, operasjon) {
     var l = finnLag(navn);
-    if (l) l.operasjoner.push(operasjon);
+    if (!l) return;
+    l.operasjoner.push(operasjon);
+    if (l.operasjoner.length > MAKS_PER_LAG) l.operasjoner.splice(0, 200);
   }
 
   /* ---------- Standardrommet ---------- */
@@ -190,20 +196,30 @@ var Verden = (function () {
       3. menyknappene
       4. datamaskinens skjerm - når vi zoomer inn, dekker den alt over
       5. musepekeren, som alltid skal synes
+
+    Unntak: når skjermen står nede i monitoren, er den bare et møbel. Da
+    tegnes den FØR figuren, så figuren kan gå foran bordet og datamaskinen.
   */
   function tegn() {
     tegnRom();
     tegnGjenstander();
 
+    var maskin = finn("datamaskin");
+    var harSkjerm = maskin && maskin.pa;
+    var skjermErMobel = harSkjerm && Skjerm.erLukket();
+
+    if (skjermErMobel) tegnSkjerm();
+
     tegnLag("rom", false);
     Knapper.tegn();
 
-    var maskin = finn("datamaskin");
-    if (maskin && maskin.pa) {
-      Skjerm.tegn(function () { tegnLag("skjerm", false); }, harInnholdPa("skjerm"));
-    }
+    if (harSkjerm && !skjermErMobel) tegnSkjerm();
 
     tegnLag("rom", true);
+  }
+
+  function tegnSkjerm() {
+    Skjerm.tegn(function () { tegnLag("skjerm", false); }, harInnholdPa("skjerm"));
   }
 
   function tegnGjenstander() {

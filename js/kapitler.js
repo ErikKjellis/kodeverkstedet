@@ -77,12 +77,92 @@ var Kode = (function () {
     return null;
   }
 
+  /* Alle linjer i hele koden, også de inni blokker. */
+  function alleLinjer(linjer, ut) {
+    ut = ut || [];
+    for (var i = 0; i < (linjer || []).length; i++) {
+      ut.push(linjer[i]);
+      if (linjer[i].barn) alleLinjer(linjer[i].barn, ut);
+    }
+    return ut;
+  }
+
+  function finnVariabel(program, navn) {
+    var alle = alleLinjer(program);
+    for (var i = 0; i < alle.length; i++) {
+      if (alle[i].type === "variabel" && alle[i].args.navn === navn) return alle[i];
+    }
+    return null;
+  }
+
+  /* Navnene på alle menyknappene, i den rekkefølgen de lages. */
+  function knappenavn(program) {
+    return alleLinjer(program)
+      .filter(function (l) { return l.type === "lagKnapp"; })
+      .map(function (l) { return l.args.navn.v; });
+  }
+
+  /* En hendelse ytterst i koden. mal er knappenavnet for nårManTrykkerPå. */
+  function hendelse(program, type, mal) {
+    for (var i = 0; i < program.length; i++) {
+      var l = program[i];
+      if (l.type !== type) continue;
+      if (mal !== undefined && l.args.mal.v !== mal) continue;
+      return l;
+    }
+    return null;
+  }
+
+  /* Finnes hendelsen et sted - også inni noe den ikke skal være inni? */
+  function hendelseHvorSomHelst(program, type, mal) {
+    return alleLinjer(program).some(function (l) {
+      return l.type === type && (mal === undefined || l.args.mal.v === mal);
+    });
+  }
+
+  /*
+    Gjør koden inni en blokk om til en flat liste med steg, i rekkefølge.
+    Kaller den en egen hjelpefunksjon (som tegnPåNytt), legges innholdet i den
+    inn i stedet. tegnFigur pakkes ikke ut - den ER steget «tegn på nytt».
+    Mangler en funksjon, noteres det i «problemer».
+  */
+  function utvid(program, linjer, problemer, dybde) {
+    dybde = dybde || 0;
+    var ut = [];
+    for (var i = 0; i < (linjer || []).length; i++) {
+      var l = linjer[i];
+      if (l.type === "kallEgenFunksjon" && l.args.navn !== "tegnFigur") {
+        var f = finnFunksjon(program, l.args.navn);
+        if (!f) {
+          if (problemer) problemer.push({ feil: "funksjonFinnesIkke", navn: l.args.navn });
+          continue;
+        }
+        if (dybde < 5) ut = ut.concat(utvid(program, f.barn, problemer, dybde + 1));
+        continue;
+      }
+      ut.push(l);
+    }
+    return ut;
+  }
+
+  function indeksI(steg, test) {
+    for (var i = 0; i < steg.length; i++) if (test(steg[i])) return i;
+    return -1;
+  }
+
   return {
     paNiva: paNiva,
     forste: forste,
     indeksAvType: indeksAvType,
     finnFunksjon: finnFunksjon,
-    finnKall: finnKall
+    finnKall: finnKall,
+    alleLinjer: alleLinjer,
+    finnVariabel: finnVariabel,
+    knappenavn: knappenavn,
+    hendelse: hendelse,
+    hendelseHvorSomHelst: hendelseHvorSomHelst,
+    utvid: utvid,
+    indeksI: indeksI
   };
 
 })();

@@ -36,18 +36,31 @@ var Figur = (function () {
 
   /* ---------- Den felles lappen ---------- */
 
+  /*
+    Når figuren går, står den et nytt sted hvert bilde - og får en ny lapp
+    hvert bilde. Vi husker bare de siste lappene. Tegninger som allerede er
+    laget, holder på sin egen lapp, så de merker ingenting.
+  */
+  var MAKS_LAPPER = 500;
+
   function hentLapp(eier, lag, x, y) {
     var nokkel = lag + "|" + Math.round(x) + "|" + Math.round(y);
-    if (!lapper[eier]) lapper[eier] = {};
-    if (!lapper[eier][nokkel]) {
-      lapper[eier][nokkel] = {
+    if (!lapper[eier]) lapper[eier] = { etterNokkel: {}, rekkefolge: [] };
+    var mine = lapper[eier];
+
+    if (!mine.etterNokkel[nokkel]) {
+      mine.etterNokkel[nokkel] = {
         hoyde: null,
         kroppsform: null,
         harfarge: null,
         kjonn: null
       };
+      mine.rekkefolge.push(nokkel);
+      if (mine.rekkefolge.length > MAKS_LAPPER) {
+        delete mine.etterNokkel[mine.rekkefolge.shift()];
+      }
     }
-    return lapper[eier][nokkel];
+    return mine.etterNokkel[nokkel];
   }
 
   function nullstillFor(eier) {

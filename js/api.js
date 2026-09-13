@@ -47,6 +47,12 @@ var Api = (function () {
   function verdiHtml(v, sti, medValg) {
     if (!v) return tegn("?");
 
+    /* Et regnestykke: figurX - 20. Hver side kan ha sine egne gule verdier. */
+    if (v.k === "regn") {
+      return verdiHtml(v.a, sti + ".a", medValg) + tegn(" " + v.op + " ") +
+             verdiHtml(v.b, sti + ".b", medValg);
+    }
+
     var innhold;
     if (v.k === "tall") innhold = tall(String(v.v));
     else if (v.k === "tekst") innhold = tekst('"' + v.v + '"');
@@ -330,6 +336,27 @@ var Api = (function () {
         type: "fingerFlytter",
         eier: miljo.eier,
         parametre: linje.args.parametre,
+        kropp: linje.barn || []
+      });
+    }
+  });
+
+  /* ---- hvertBilde(function () { ... }); ---------------------------------
+     SPILLØKKA. Koden inni kjøres seksti ganger i sekundet, for alltid.
+     Endre plassen litt, visk ut, tegn på nytt - så fort at det ser ut som
+     bevegelse. Det er sånn alle dataspill virker. */
+  definer({
+    type: "hvertBilde",
+    erBlokk: true,
+    htmlStart: function () {
+      return funk("hvertBilde") + tegn("(") + nokkel("function") + " " + tegn("() {");
+    },
+    htmlSlutt: function () { return tegn("});"); },
+    kjor: function (miljo, linje) {
+      Kjorer.registrerHendelse({
+        type: "bilde",
+        eier: miljo.eier,
+        parametre: [],
         kropp: linje.barn || []
       });
     }
