@@ -48,6 +48,12 @@ var Api = (function () {
     if (!v) return tegn("?");
 
     /* Et regnestykke: figurX - 20. Hver side kan ha sine egne gule verdier. */
+    /* hentLagret("hoyde", hoyde) */
+    if (v.k === "hent") {
+      return funk("hentLagret") + tegn("(") + verdiHtml(v.navn, sti + ".navn", medValg) +
+             tegn(", ") + verdiHtml(v.standard, sti + ".standard", medValg) + tegn(")");
+    }
+
     if (v.k === "regn") {
       return verdiHtml(v.a, sti + ".a", medValg) + tegn(" " + v.op + " ") +
              verdiHtml(v.b, sti + ".b", medValg);
@@ -163,6 +169,38 @@ var Api = (function () {
     },
     kjor: function (miljo) {
       Verden.tomLagFor(miljo.eier, Kjorer.flatenTil(miljo.eier));
+    }
+  });
+
+  /* ---- lagre("hoyde", hoyde); -------------------------------------------
+     Skriver en verdi på en lapp med navn på, og legger den i nettleseren.
+     Lappen blir liggende selv om spillet slås av. Det første er navnet på
+     lappen, det andre er det som skal skrives på den. */
+  var nyligLagret = [];
+  var lagreTimer = null;
+
+  function meldLagret(navn) {
+    if (nyligLagret.indexOf(navn) === -1) nyligLagret.push(navn);
+    if (lagreTimer) clearTimeout(lagreTimer);
+    /* Lagrer en knapp tre ting på én gang, skal det bli én beskjed, ikke tre. */
+    lagreTimer = setTimeout(function () {
+      Banner.vis("💾 Lagret: " + nyligLagret.join(", "), { varighet: 2500 });
+      nyligLagret = [];
+      lagreTimer = null;
+    }, 30);
+  }
+
+  definer({
+    type: "lagre",
+    erBlokk: false,
+    html: function (linje, medValg) {
+      return funk("lagre") + tegn("(") + verdiHtml(linje.args.navn, "navn", medValg) +
+             tegn(", ") + verdiHtml(linje.args.verdi, "verdi", medValg) + tegn(");");
+    },
+    kjor: function (miljo, linje) {
+      var navn = Kjorer.verdi(miljo, linje.args.navn);
+      Fremdrift.lagreVerdi(navn, Kjorer.verdi(miljo, linje.args.verdi));
+      meldLagret(navn);
     }
   });
 

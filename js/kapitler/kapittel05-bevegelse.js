@@ -663,7 +663,7 @@
           "Figuren din kan gå. Og du styrer den.",
           "Men prøv å gå helt bort til kanten … Den går rett gjennom veggen og ut i ingenting. 🧱",
           "Den vet ikke at det finnes en vegg. Det skal den få lære.",
-          "Men først: nå skal du få tegne ting selv. 🎨"
+          "Men først skal spillet ditt lære å huske. 💾"
         ]
       }
 

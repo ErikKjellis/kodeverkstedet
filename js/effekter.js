@@ -26,6 +26,28 @@ var Effekter = (function () {
   }
 
   /* Liten ring der spilleren trykket - viser at trykket ble registrert. */
+  /* Skjermen blir svart et øyeblikk - som når nettbrettet slås av og på. */
+  var blitsIgjen = 0;
+  var BLITS_LENGDE = 40;
+
+  function blits() {
+    blitsIgjen = BLITS_LENGDE;
+  }
+
+  function tegnBlits() {
+    if (blitsIgjen <= 0) return;
+    blitsIgjen--;
+    /* Mørkner raskt, lysner langsomt. */
+    var t = blitsIgjen / BLITS_LENGDE;
+    var styrke = t > 0.75 ? (1 - t) * 4 : t / 0.75;
+    var o = Tegning.synligOmrade();
+    var ctx = Tegning.ctx();
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, Math.min(1, styrke));
+    Tegning.firkant(o.venstre, o.topp, o.bredde, o.hoyde, "#000000");
+    ctx.restore();
+  }
+
   function ring(x, y) {
     ringer.push({ x: x, y: y, radius: 6, alder: 0 });
   }
@@ -69,6 +91,8 @@ var Effekter = (function () {
       ctx.stroke();
       ctx.restore();
     }
+
+    tegnBlits();
   }
 
   function tom() {
@@ -79,6 +103,7 @@ var Effekter = (function () {
   return {
     konfetti: konfetti,
     ring: ring,
+    blits: blits,
     oppdaterOgTegn: oppdaterOgTegn,
     tom: tom
   };

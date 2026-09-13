@@ -144,6 +144,13 @@ var Kjorer = (function () {
     if (v.k === "tall" || v.k === "tekst") return v.v;
 
     /* Et regnestykke: figurX + 20, figurX - 2, figurX + fart */
+    /* hentLagret("hoyde", hoyde): det som er lagret - eller standardverdien
+       hvis ingenting er lagret under det navnet ennå. */
+    if (v.k === "hent") {
+      var lagret = Fremdrift.hentVerdi(verdi(miljo, v.navn));
+      return lagret !== undefined ? lagret : verdi(miljo, v.standard);
+    }
+
     if (v.k === "regn") {
       var a = Number(verdi(miljo, v.a));
       var b = Number(verdi(miljo, v.b));

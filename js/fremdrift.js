@@ -19,7 +19,8 @@ var Fremdrift = (function () {
       steg: 0,            /* hvilket steg i kapittelet */
       utkast: {},         /* oppgaveId -> program han holder på med */
       installerte: [],    /* [{ id, program }] i den rekkefølgen de ble laget */
-      tilstand: {}        /* småting verden må huske, f.eks. om maskinen står på */
+      tilstand: {},       /* småting verden må huske, f.eks. om maskinen står på */
+      lagret: {}          /* det HAN har lagret med lagre("navn", verdi) */
     };
   }
 
@@ -34,7 +35,8 @@ var Fremdrift = (function () {
           steg: lagret.steg || 0,
           utkast: lagret.utkast || {},
           installerte: lagret.installerte || [],
-          tilstand: lagret.tilstand || {}
+          tilstand: lagret.tilstand || {},
+          lagret: lagret.lagret || {}
         };
       }
     } catch (feil) {
@@ -97,6 +99,18 @@ var Fremdrift = (function () {
 
   /* ---------- Småting verden må huske ---------- */
 
+  /* ---------- Det spilleren selv lagrer (kapittel 6) ---------- */
+
+  function lagreVerdi(navn, verdi) {
+    data.lagret[navn] = verdi;
+    lagre();
+  }
+
+  /* Gir undefined hvis ingenting er lagret under det navnet. */
+  function hentVerdi(navn) {
+    return Object.prototype.hasOwnProperty.call(data.lagret, navn) ? data.lagret[navn] : undefined;
+  }
+
   function settTilstand(nokkel, verdi) {
     data.tilstand[nokkel] = verdi;
     lagre();
@@ -124,6 +138,8 @@ var Fremdrift = (function () {
     installer: installer,
     hentInstallert: hentInstallert,
     alleInstallerte: alleInstallerte,
+    lagreVerdi: lagreVerdi,
+    hentVerdi: hentVerdi,
     settTilstand: settTilstand,
     hentTilstand: hentTilstand,
     nullstill: nullstill,
