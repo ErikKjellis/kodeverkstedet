@@ -145,6 +145,7 @@ js/
   api.js                        ALLE kodebitene eleven kan bruke
   kjorer.js                     kjører elevens program
   kodeeditor.js                 programmeringsvinduet
+  verksted.js                   Kodeverkstedet som fritt verktøy etter siste kapittel
   kapitler.js                   kapittelmotoren + hjelpere til oppgavesjekk
   kapitler/
     kapittel00-rommet.js        det tomme rommet
@@ -153,6 +154,8 @@ js/
     kapittel03-figuren.js       personen som bor i rommet
     kapittel04-menyen.js        knapper som endrer figuren
     kapittel05-bevegelse.js     figuren går, og knappene styrer den
+    kapittel06-lagring.js       lagre og hente
+    kapittel07-veggen.js        første if
 ```
 
 ### To steder å være
@@ -228,7 +231,7 @@ En **oppgave** ser slik ut:
   tittel: "Bygg en stol",
   instruks: "Forklaringen som står øverst i vinduet.",
   flate: "skjerm",              // "rom" eller "skjerm"
-  valgtVedStart: "forste",      // "forste", "siste" eller utelatt
+  valgtVedStart: "forste",      // "forste", "siste", utelatt – eller function (program) som gir id-en til en linje
   startProgram: function () { return [ /* kodelinjer som står der fra før */ ]; },
   palett: [ /* kodebitene han kan velge mellom */ ],
   hint: [ "Vises ett om gangen når han trykker på Hint." ],
@@ -303,6 +306,35 @@ Det som tegnes, blir stående til noen visker det ut – også inni hendelser og
 spilløkka. **Eneste unntak er musepekeren** (`nårFingerenFlytterSeg`), som visker
 ut sitt eget forrige bilde av seg selv. Det er med vilje: glemmer han `viskUt()`
 i spilløkka, skal han få se figuren bli til en orm.
+
+### Lagring og spørsmål
+
+`lagre("hoyde", hoyde);` legger en verdi i nettleseren under et navn, og
+`hentLagret("hoyde", hoyde)` er en verdi: det lagrede, eller standardverdien hvis
+ingenting er lagret. Lagringen ligger i `Fremdrift` og nullstilles med
+`nullstillSpillet()`.
+
+`if (figurX < 110) { ... }` er kodebiten `hvis`. Sammenligningstegnet er en verdi
+av typen `op`, med en `valg`-liste som gjør det trykkbart:
+
+```javascript
+op: { k: "op", v: "<", valg: ["<", ">"] }
+```
+
+### Kodeverkstedet – fri lek
+
+Når alle kapitlene er spilt, åpner Kode-ikonet en liste over programmene hans i
+stedet for en oppgave. Et nytt kapittel skal melde inn det det lærer bort, nederst
+i kapittelfila:
+
+```javascript
+Verksted.navngi("stol", "Stolen", "🪑", "Kort beskrivelse");   // bare for nye programmer
+Verksted.leggTilBiter("stol", [ /* kodebiter han har lært */ ]);
+```
+
+Et program kan beskytte seg mot endringer som ville låst ham ute av spillet med
+`Verksted.beskytt(id, function (program) { ... })`. Returnerer funksjonen en
+melding, kjøres ikke koden, og det lagrede programmet settes i gang igjen.
 
 ### Hjelpere til oppgavesjekker
 

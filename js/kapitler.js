@@ -273,7 +273,7 @@ var Kapittelmotor = (function () {
        neste gang han åpner det, skal det være verkstedet. */
     Skjerm.lukkProgram();
     Dialog.si([
-      "Der var alt jeg har å vise deg for nå.",
+      "Det var alt jeg har å vise deg for nå.",
       "Men spillet ditt er ikke ferdig – det er så vidt begynt!",
       "Gå til datamaskinen og åpne Kodeverkstedet når du vil. Alle programmene dine ligger der, og du kan endre dem som du vil. 🛠️"
     ], function () {

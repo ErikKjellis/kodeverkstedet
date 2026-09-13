@@ -276,6 +276,7 @@ var Kjorer = (function () {
     verdi: verdi,
     settVariabel: settVariabel,
     tilordne: tilordne,
+    kjorLinjer: kjorLinjer,
     flatenTil: flatenTil,
     hentFeil: hentFeil,
     tomFeil: tomFeil,

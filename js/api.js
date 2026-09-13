@@ -62,6 +62,8 @@ var Api = (function () {
     var innhold;
     if (v.k === "tall") innhold = tall(String(v.v));
     else if (v.k === "tekst") innhold = tekst('"' + v.v + '"');
+    /* Sammenligningstegn: < og > må skrives om, ellers tror nettleseren det er HTML. */
+    else if (v.k === "op") innhold = tegn(v.v === "<" ? "&lt;" : v.v === ">" ? "&gt;" : v.v);
     else innhold = vari(v.v);
 
     if (medValg !== false && sti && v.valg && v.valg.length > 1) {
@@ -376,6 +378,27 @@ var Api = (function () {
         parametre: linje.args.parametre,
         kropp: linje.barn || []
       });
+    }
+  });
+
+  /* ---- if (figurX < 110) { ... } ----------------------------------------
+     Et SPØRSMÅL. Er svaret ja, kjøres koden inni. Er svaret nei, hoppes den
+     over. Tegnet kan trykkes på: < er «mindre enn», > er «større enn». */
+  definer({
+    type: "hvis",
+    erBlokk: true,
+    htmlStart: function (linje, medValg) {
+      var a = linje.args;
+      return nokkel("if") + " " + tegn("(") + verdiHtml(a.a, "a", medValg) + " " +
+             verdiHtml(a.op, "op", medValg) + " " + verdiHtml(a.b, "b", medValg) + tegn(") {");
+    },
+    htmlSlutt: function () { return tegn("}"); },
+    kjor: function (miljo, linje) {
+      var a = Number(Kjorer.verdi(miljo, linje.args.a));
+      var b = Number(Kjorer.verdi(miljo, linje.args.b));
+      var op = linje.args.op.v;
+      var svar = (op === "<") ? a < b : (op === ">") ? a > b : a === b;
+      if (svar) Kjorer.kjorLinjer(linje.barn || [], miljo);
     }
   });
 

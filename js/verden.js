@@ -149,6 +149,27 @@ var Verden = (function () {
       Tegning.linje(x, GULVHOYDE, x - 70, bunn, "rgba(0,0,0,0.22)", 3);
     }
     Tegning.firkant(venstre, GULVHOYDE, bredde, 5, "rgba(0,0,0,0.3)");
+
+    tegnSidevegger(venstre, topp, bredde, bunn);
+  }
+
+  /*
+    Rommet har vegger på hver side. Figuren kan gå rett gjennom dem - helt til
+    han lærer den noe annet i kapittel 7.
+  */
+  var VEGG_VENSTRE = 50;
+  var VEGG_HOYRE = 950;
+
+  function tegnSidevegger(venstre, topp, bredde, bunn) {
+    var hoyreKant = venstre + bredde;
+    var hoyde = bunn - topp;
+
+    Tegning.firkant(venstre, topp, VEGG_VENSTRE - venstre, hoyde, "#1c2031");
+    Tegning.firkant(VEGG_HOYRE, topp, hoyreKant - VEGG_HOYRE, hoyde, "#1c2031");
+
+    /* Kanten der sideveggen møter rommet */
+    Tegning.firkant(VEGG_VENSTRE - 6, topp, 6, hoyde, "#2f3550");
+    Tegning.firkant(VEGG_HOYRE, topp, 6, hoyde, "#2f3550");
   }
 
   function tegnBord() {

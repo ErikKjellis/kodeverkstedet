@@ -4,7 +4,7 @@ Dette dokumentet er min forståelse av hva vi holder på med, hvilke valg du har
 tatt, hva som er bygget, og hva som står for tur. **Planen er styrt av dine valg.**
 Der jeg foreslår noe på egen hånd, står det uttrykkelig.
 
-Sist oppdatert: 13. september 2026 (etter kapittel 5).
+Sist oppdatert: 13. september 2026 (etter kapittel 7).
 
 ---
 
@@ -58,6 +58,8 @@ Disse ligger fast med mindre du sier noe annet.
 | **Figuren kan ikke bevege seg før vi lærer det** | Bevegelse er en egen leksjon, ikke noe han får gratis. |
 | **Rekkefølgen: meny, så bevegelse** | Menyen først, deretter bevegelse. Tegneprogrammet kommer etter det. |
 | **Styring med knapper først** | Figuren styres med knapper i menyen. Å dra med fingeren kan komme senere. |
+| **Lagreknappen programmerer han selv** | Ikke en ferdig knapp: han oppdager at spillet glemmer, og lager lagring og henting. |
+| **Veggen før tegneprogrammet** | Meny, bevegelse, lagring, vegg – så tegneprogram og animasjon. |
 | **Tegneprogrammet** | Et program på skrivebordet der han tegner enkle tegninger, som senere blir grafikk og animasjon i spillet. |
 | **16 × 16 i tegneprogrammet** | Til å begynne med. Vi ser om det er avansert nok når han har prøvd. |
 
@@ -149,8 +151,9 @@ nytt** – som er selve grunnlaget for bevegelse i neste kapittel.
   den gamle, og det gamle hodet stikker opp over – to hoder, umulig å ta feil av.
   Andre veien skjuler den nye, store figuren nesten hele den gamle, og leksjonen
   forsvinner.
-* **Menyvalg lagres ikke.** Laster han spillet på nytt, er figuren tilbake slik
-  koden sier. Det er slik ekte programmer virker også; å lagre er et eget begrep.
+* **Menyvalg lagres ikke** – i kapittel 4. Laster han spillet på nytt, er figuren tilbake slik
+  koden sier. Det er slik ekte programmer virker også; å lagre er et eget begrep,
+  og det lærer han i kapittel 6.
 
 ### Rettet etter din første testing
 * Palettknapper lot seg ikke velge med mus. Trykk-effekten flyttet knappen 2
@@ -208,6 +211,70 @@ styre en annen (plassen) hvert eneste bilde.
   Den hopper 20 og begynner å gå. Det er ikke pent, men det er hans kode, og det
   virker.
 
+### Kodeverkstedet – fri lek
+**Rettet etter din testing:** etter siste kapittel åpnet Kode-ikonet bare et bilde
+av et program. Nå åpner det en liste over programmene hans – Musepekeren,
+Skrivebordet og Figuren. Han velger ett, endrer det som han vil, og trykker Kjør.
+Ingen sjekk, ingen feiring. «Lukk» går ut uten å kjøre.
+
+Paletten har akkurat det han har lært: hvert kapittel melder inn sine kodebiter.
+Skrivebordet er beskyttet – sletter han veien inn til Kodeverkstedet, sier Bit nei
+før koden gjelder, så han ikke låser seg ute av sin egen kode.
+
+Fri lek åpner seg bare når alle kapitlene som finnes er spilt. Kommer det nye
+kapitler, fortsetter spillet der.
+
+### Kapittel 6 – Lagring
+**Ditt valg:** han programmerer lagreknappen selv.
+
+Han leker med figuren – og så startes spillet på nytt, med et kort svart blink
+som når nettbrettet slås av og på. Alt er glemt. Variabler lever bare så lenge
+programmet kjører.
+
+**Lagre-knappen.** `lagre("hoyde", hoyde);` for høyde, hårfarge og plass. Det
+teller ikke å lagre en figur han ikke har endret. Spillet startes på nytt igjen –
+og alt er *fortsatt* glemt.
+
+**Hent det tilbake.** Det lagrede ligger trygt, men ingen har sagt at spillet skal
+hente det. Helt ytterst i koden:
+
+```javascript
+hoyde = hentLagret("hoyde", hoyde);
+```
+
+Legger han hentingen i spilløkka, forklarer Bit at menyen da slutter å virke –
+det gamle hentes seksti ganger i sekundet.
+
+**Lærer:** at programmer glemmer, å lagre, å hente, og **standardverdi**.
+
+Det lagrede overlever at nettleseren lukkes helt – det er testet med ekte
+omlasting. Merk at spillet fra en fil på PC-en og spillet på GitHub Pages har hver
+sin lagring.
+
+### Kapittel 7 – Veggen
+**Ditt valg:** veggen før tegneprogrammet.
+
+Rommet har fått synlige sidevegger. Figuren går rett gjennom dem – til han lærer
+den noe annet.
+
+**Venstre vegg.** Hans første `if`, inni spilløkka:
+
+```javascript
+if (figurX < 110) {
+  figurX = 110;
+}
+```
+
+Markøren står allerede på riktig sted i spilløkka. Mangler noe, får han først
+prøve å gå inn i veggen – og se at figuren går rett gjennom – før Bit forklarer.
+
+**Høyre vegg.** Samme mønster, men kodebiten kommer med vilje med feil tegn: `<`.
+Han må selv tenke over at høyre vegg spør «større enn». Med feil tegn sitter
+figuren fast ved veggen når han prøver å gå bort fra den.
+
+**Lærer:** **`if`** – et spørsmål i koden, og at et program kan ta valg. Og
+forskjellen på `<` og `>`.
+
 ### Motoren slik den står nå
 To flater, `"rom"` og `"skjerm"`, begge med koordinatsystem 1000 × 700. Elevens
 program lagres som data og tolkes – ikke `eval`. Alt et program lager merkes med
@@ -216,27 +283,27 @@ og alle programmene hans lagres i nettleseren og kjøres på nytt ved oppstart.
 
 Menyknapper er *ting* som blir stående, mens tegninger er *maling* som `viskUt()`
 fjerner. Musepekeren tegnes alltid øverst. En oppgave kan be ham prøve først
-(`provForst`), gi ham tid til å se på før Bit sier noe (`seTid`), og regne ut
-palett og instruks ut fra det han har laget tidligere. I editoren kan man trykke
-på en `});` for å sette inn *under* en blokk i stedet for inni.
+(`provForst`), gi ham tid til å se på før Bit sier noe (`seTid`), peke ut nøyaktig
+hvor markøren skal starte, og regne ut palett og instruks ut fra det han har laget
+tidligere. I editoren kan man trykke på en `});` for å sette inn *under* en blokk.
 
-Fra kapittel 5: `hvertBilde` kjøres nøyaktig seksti ganger i sekundet, også på
-nettbrett som tegner 90 eller 120 ganger i sekundet. Verdier kan være små
-regnestykker (`figurX + fart`). Menyen brekker om til flere kolonner når den blir
-lang. Felles hjelpere til oppgavesjekkene ligger i `Kode` i `js/kapitler.js`.
+`hvertBilde` kjøres nøyaktig seksti ganger i sekundet. Verdier kan være små
+regnestykker (`figurX + fart`) eller hentede verdier (`hentLagret(...)`). Kodebiten
+`if` har et trykkbart sammenligningstegn. Felles hjelpere til oppgavesjekkene ligger
+i `Kode` i `js/kapitler.js`, og kodebitene til fri lek meldes inn i `Verksted`.
 
 ---
 
 ## 7. Hva vi skal gjøre
 
-### Kapittel 6 – Tegneprogrammet  ← neste
+### Kapittel 8 – Tegneprogrammet  ← neste
 
 **Din idé:** et program på skrivebordet der man kan tegne enkle tegninger, som vi
 siden bruker som grafikk i spillet.
 
 Et nytt ikon – *Tegneboka* – åpner et **16 × 16** rutenett han kan male i med
 fingeren, en fargepalett, og et navn å lagre tegningen under. Selve
-tegneverktøyet er noe vi gir ham, på samme måte som Kodeverkstedet 1.0. Det han
+tegneverktøyet er noe vi gir ham, på samme måte som Kodeverkstedet. Det han
 bygger selv, er ikonet og åpningen – slik han gjorde i kapittel 2.
 
 Så kommer poenget. En ny kodebit:
@@ -253,18 +320,25 @@ tall**. Hver rute er et tall, hvert tall er en farge. Koden leser den samme list
 **Lærer:** koblingen mellom det visuelle og koden. At grafikk er data. At en
 tegning og et program er laget av det samme stoffet.
 
+**Bygger på kapittel 2 og 6:** han har allerede laget et ikon som åpner et
+program, og han vet at ting kan lagres under et navn. En tegning er bare en ny
+slags lapp.
+
 **Motoren må lære seg:** en egen skjerm for tegneverktøyet inne i maskinen (ikke
 kodeeditoren), lagring av tegninger under et navn, og en måte å vise lista med
-tall på som en tiåring faktisk kan lese.
+tall på som en tiåring faktisk kan lese. Verkstedlista må også kunne åpne
+Tegneboka.
 
-### Kapittel 7 – Animasjon
+### Kapittel 9 – Animasjon
 
-Her møtes kapittel 5 og 6. Han tegner to bilder av figuren i Tegneboka – ett med
-venstre fot fram, ett med høyre – og bytter mellom dem i spilløkka mens figuren
-går. Det er animasjon, og han har laget begge bildene selv.
+Her møtes bevegelse og tegneprogrammet. Han tegner to bilder av figuren i
+Tegneboka – ett med venstre fot fram, ett med høyre – og bytter mellom dem i
+spilløkka mens figuren går. Det er animasjon, og han har laget begge bildene
+selv.
 
 **Lærer:** at animasjon bare er bilder som byttes fort nok. At det han tegner og
-det han koder henger sammen.
+det han koder henger sammen. Og trolig `if`/`else` for å velge bilde – som han
+nå har et godt grunnlag for.
 
 ### Videre – skissen
 
@@ -272,47 +346,40 @@ Rekkefølgen er ikke spikret, og begrepene bestemmer den mer enn møblene gjør.
 
 | Det han bygger | Begrepet det bærer |
 |---|---|
-| En vegg figuren ikke kan gå gjennom | `if` – *hvis* figuren er ved kanten, stopp. Bit har allerede lovet det. |
 | Lys som kan slås av og på | `if`/`else`, sant og usant |
 | En stol å sitte på | kollisjon, tilstand |
 | Et vindu å se ut av | lag og dybde |
 | Flere ikoner på skrivebordet | **løkke** – gjør det samme for hver ting i en liste |
 | Figuren blir sulten | variabler som endrer seg over tid, tid som begrep |
-| Spillet husker det du valgte i menyen | å lagre, og hvorfor ting ellers glemmes |
 | En fiende | flere figurer, kollisjon som betyr noe |
 | Poeng og mål | tilstand, vinne og tape – **et spill** |
-
-**Merk:** kapittel 5 slutter med at figuren går rett gjennom veggen, og Bit sier
-«det skal den få lære». Veggen er dermed lovet. Den kan komme før eller etter
-animasjonen – men den bør ikke vente for lenge.
 
 ---
 
 ## 8. Ting jeg vil at du skal bestemme
 
-1. **Veggen – før eller etter tegneprogrammet?** Planen følger din rekkefølge:
-   tegneprogram, så animasjon. Men veggen er en liten oppgave som bygger rett på
-   kapittel 5, og den er lovet. Den kan skytes inn nå, eller komme etter
-   animasjonen.
+1. **Hvor mye av Tegneboka skal han bygge selv?** Planen er at han bygger ikonet
+   og åpningen, mens selve tegneverktøyet er gitt. Det alternative er at han også
+   bygger en enkel versjon av rutenettet – mer lærerikt, men et mye lengre
+   kapittel.
 2. **Skal Bit ha en annen stemme etter hvert?** Han er ganske ivrig nå. Det
    passer for en tiåring som er fersk, men kan bli mye om et år.
-3. **Hvordan gikk det da han prøvde?** Han har ikke prøvd ennå. Alt over er mine
-   antagelser om hva som treffer. Ett kvarter med ham foran nettbrettet er verdt
-   mer enn hele dette dokumentet – og særlig tempoet trenger det.
+3. **Hvordan gikk det da han prøvde?** Alt over er fortsatt mine antagelser om hva
+   som treffer. Ett kvarter med ham foran nettbrettet er verdt mer enn hele dette
+   dokumentet – og særlig tempoet trenger det.
 
 ## 9. Det jeg er usikker på
 
-* **Tempoet.** Kapittel 3 og 5 har tre oppgaver hver, kapittel 4 har to der den
-  første inneholder tre oppdagelser. Det kan være mye i strekk.
-* **Om paletten blir for full.** Den vokser for hvert kapittel. På et tidspunkt
-  må kodebitene sorteres i grupper, eller så drukner han i valg.
-* **Om koden blir for lang å bla i.** Etter kapittel 5 er figurprogrammet hans
-  rundt førti linjer. På et nettbrett betyr det mye rulling, og det blir stadig
-  vanskeligere å finne riktig sted å sette inn. Lukkbare blokker, som kan
-  foldes sammen, er trolig det neste editoren trenger.
+* **Tempoet.** Kapittel 3, 5 og 6 har flere oppgaver hver. Det kan være mye i
+  strekk for én økt.
+* **Om paletten blir for full.** I fri lek har Figuren nå over tretti kodebiter.
+  Den trenger trolig grupper (Utseende, Meny, Bevegelse, Lagring, Vegger).
+* **Om koden blir for lang å bla i.** Figurprogrammet hans er nå godt over femti
+  linjer. På et nettbrett betyr det mye rulling. Lukkbare blokker, som kan foldes
+  sammen, er trolig det neste editoren trenger.
 * **Om menyen blir for rotete.** Knappene står i den rekkefølgen koden lager dem,
-  så «Stopp» kan havne i en egen kolonne langt fra «Høyre». Grupper av knapper er
-  en mulig senere forbedring.
+  så «Lagre» og «Stopp» havner hulter til bulter. Grupper av knapper er en mulig
+  senere forbedring.
 * **Om han kommer til å ville lese koden i det hele tatt**, eller bare trykke til
-  det virker. Begge deler er greit i starten – men leksjonene om rekkefølge er
-  bygget på at han faktisk ser hva som står.
+  det virker. Begge deler er greit i starten – men leksjonene om rekkefølge og
+  tegn er bygget på at han faktisk ser hva som står.

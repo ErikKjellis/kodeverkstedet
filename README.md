@@ -65,6 +65,11 @@ eneste tegn.
 | 3 · Figuren | en person, fra strekmann til ferdig utseende | **argument** – å gi en funksjon noe å jobbe med |
 | 4 · Menyen | knapper i rommet som endrer figuren | å **endre** en variabel, og å **viske ut og tegne på nytt** |
 | 5 · Bevegelse | en figur som går, og knapper som styrer den | **spilløkka** – seksti ganger i sekundet, og å regne med variabler |
+| 6 · Lagring | en Lagre-knapp, og at spillet henter det lagrede når det starter | at programmer **glemmer**, å lagre og hente, standardverdi |
+| 7 · Veggen | vegger figuren ikke kan gå gjennom | **`if`** – et spørsmål i koden, og forskjellen på `<` og `>` |
+
+Når alle kapitlene er spilt, blir Kodeverkstedet et fritt verktøy: han velger et
+av programmene sine og endrer det som han vil, med alle kodebitene han har lært.
 
 Begrepene kommer alltid *etter* at han har sett dem virke. Han lager en hendelse
 først, og får vite at den heter «hendelse» etterpå.

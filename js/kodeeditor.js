@@ -84,6 +84,11 @@ var KodeEditor = (function () {
   */
   function velgVedStart() {
     if (!program.length) { valgtId = null; return; }
+    /* En oppgave kan også peke ut akkurat hvor han skal begynne. */
+    if (typeof oppgave.valgtVedStart === "function") {
+      valgtId = oppgave.valgtVedStart(program) || null;
+      return;
+    }
     if (oppgave.valgtVedStart === "forste") {
       valgtId = program[0].id;
     } else if (oppgave.valgtVedStart === "siste") {
