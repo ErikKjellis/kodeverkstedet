@@ -11,6 +11,7 @@ var Dialog = (function () {
   var linjer = [];
   var linjeNr = 0;
   var naarFerdig = null;
+  var sisteKnapp = "Videre ▸";   /* teksten på knappen når det ikke kommer mer */
 
   var maalTekst = "";
   var visteTegn = 0;
@@ -48,7 +49,7 @@ var Dialog = (function () {
 
     avatarEl.textContent = valg.avatar || "🤖";
     navnEl.textContent = valg.navn || "Bit";
-    videreEl.textContent = valg.knapp || "Videre ▸";
+    sisteKnapp = valg.knapp || "Videre ▸";
     boks.classList.toggle("feiring", !!valg.feiring);
 
     Banner.skjul();
@@ -65,6 +66,12 @@ var Dialog = (function () {
     maalTekst = linjer[linjeNr];
     visteTegn = 0;
     tekstEl.textContent = "";
+
+    /* «Prøv igjen» skal bare stå på knappen når det faktisk er det neste som
+       skjer. Kommer det flere linjer først, heter den «Videre». */
+    var erSiste = (linjeNr === linjer.length - 1);
+    videreEl.textContent = erSiste ? sisteKnapp : "Videre ▸";
+
     skriv();
   }
 

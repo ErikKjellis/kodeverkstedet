@@ -74,8 +74,10 @@
     var gjenstand = Verden.trykketPa(x, y);
     if (!gjenstand) return;
 
-    /* Trykker man på en datamaskin som står på, går man inn i den. */
-    if (gjenstand.id === "datamaskin" && gjenstand.pa) Skjerm.apne();
+    /* Trykker man på en datamaskin som står på, går man inn i den.
+       Men ikke midt i en samtale med Bit eller mens kodevinduet er oppe. */
+    var opptatt = Dialog.erSynlig() || KodeEditor.erApen();
+    if (gjenstand.id === "datamaskin" && gjenstand.pa && !opptatt) Skjerm.apne();
 
     Kjorer.utlos("trykk", [], null, gjenstand.navn || gjenstand.id);
   }

@@ -301,25 +301,24 @@
           Banner.vis("Trykk på datamaskinen 💻", {});
           Verden.blink("datamaskin", 600);
 
-          var stopp = Input.naarTrykk(function (x, y) {
-            if (Skjerm.paVeiInn()) return;
-            var gjenstand = Verden.trykketPa(x, y);
-            if (!gjenstand || gjenstand.id !== "datamaskin") return;
+          /*
+            Selve innzoomingen gjør spillet alltid når man trykker på en
+            datamaskin som står på (se paTrykk i spill.js). Her venter vi bare
+            til vi faktisk ER inne. Vi lytter ikke på trykket selv - da ville
+            to lyttere slåss om det samme trykket.
+          */
+          var aktiv = true;
+          (function vent() {
+            if (!aktiv) return;
+            if (Skjerm.erApen()) {
+              Banner.skjul();
+              neste();
+              return;
+            }
+            requestAnimationFrame(vent);
+          })();
 
-            Banner.skjul();
-            Skjerm.apne();
-            stopp();
-
-            /* Vent til vi faktisk ER inne, ikke bare et bestemt antall
-               millisekunder - legger han fra seg nettbrettet midt i
-               innzoomingen, stopper nettleseren animasjonen. */
-            (function vent() {
-              if (Skjerm.erApen()) { neste(); return; }
-              requestAnimationFrame(vent);
-            })();
-          });
-
-          return stopp;
+          return function () { aktiv = false; };
         }
       },
 

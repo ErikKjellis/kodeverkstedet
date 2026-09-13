@@ -166,7 +166,13 @@ button {
   font-weight: 700;
 }
 
-#dialog-videre:active { transform: translateY(2px); }
+/*
+  Trykk-effekter flytter ALDRI knappen. En knapp som flytter seg 2 piksler
+  kan gjøre en full liste rullbar; på Windows tar rullefeltet plass, knappene
+  brekker om til ny linje, og knappen glir bort fra musepekeren før man slipper
+  - da blir det aldri noe klikk. Vi mørklegger i stedet.
+*/
+#dialog-videre:active { box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.3); }
 
 /* ---------- Programmeringsvinduet ---------- */
 
@@ -189,6 +195,7 @@ button {
   flex: 0 1 auto;
   max-height: 30vh;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   -webkit-overflow-scrolling: touch;
   padding: 12px 16px 10px;
   border-bottom: 2px solid var(--kant);
@@ -216,6 +223,7 @@ button {
   flex: 1 1 auto;
   min-height: 30vh;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   -webkit-overflow-scrolling: touch;
   padding: 12px 10px 18px;
 }
@@ -336,7 +344,6 @@ button {
 
 .kodeverdi:active {
   background: rgba(255, 210, 63, 0.26);
-  transform: translateY(1px);
 }
 
 /* Fargelegging av koden */
@@ -371,6 +378,7 @@ button {
   gap: 8px;
   max-height: 25vh;
   overflow-y: auto;
+  scrollbar-gutter: stable;   /* rullefeltet får fast plass, så ingenting hopper */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -389,7 +397,7 @@ button {
 
 .palettknapp:active {
   background: var(--kant);
-  transform: translateY(2px);
+  box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.35);
 }
 
 #editor-knapper {
@@ -417,7 +425,7 @@ button {
   font-weight: 700;
 }
 
-#editor-knapper button:active { transform: translateY(2px); }
+#editor-knapper button:active { box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.3); }
 
 /* Liggende format på små skjermer: gi koden mer plass */
 @media (orientation: landscape) and (max-height: 560px) {
