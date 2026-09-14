@@ -17,8 +17,8 @@ Kapitler.leggTil({
     {
       type: "dialog",
       linjer: [
-        "Hei! 👋",
-        "Dette er et programmeringsspill.",
+        "Hei, Sigurd! 👋",
+        "Dette er et programmeringsspill som pappa har laget til deg.",
         "Akkurat nå er det ganske tomt her. Bare et rom, et bord og en datamaskin.",
         "Alt annet skal DU lage.",
         "Vi begynner enkelt: trykk på datamaskinen."
